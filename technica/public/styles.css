@@ -300,10 +300,6 @@ main:focus {
 .story-card p {
   margin-bottom: 0;
 }
-.community-teaser {
-  padding: 20px 0 20px 30px;
-  border-left: 1px solid var(--line);
-}
 .page-intro {
   max-width: 720px;
   margin-bottom: 35px;
@@ -656,17 +652,6 @@ details.optional p {
   font-size: 0.85rem;
   margin: 28px 0;
 }
-.community-layout {
-  display: grid;
-  grid-template-columns: 1.45fr 1fr;
-  gap: 45px;
-}
-.contribution-form {
-  background: var(--paper);
-  border: 1px solid var(--line);
-  padding: 28px;
-  border-radius: 16px;
-}
 label {
   font-weight: 600;
   display: block;
@@ -715,28 +700,6 @@ input[type="radio"] {
 .check input {
   margin: 3px 0 0;
 }
-.community-sidebar h2 {
-  font-size: 1.4rem;
-}
-.workflow {
-  padding-left: 24px;
-}
-.workflow li {
-  padding: 0 0 18px 8px;
-}
-.workflow strong {
-  display: block;
-}
-.community-sidebar section {
-  margin-bottom: 32px;
-}
-.public-contribution {
-  border-top: 1px solid var(--line);
-  padding: 24px 0;
-}
-.public-contribution h3 {
-  margin: 10px 0;
-}
 .empty {
   background: var(--sage);
   border-radius: 12px;
@@ -770,33 +733,6 @@ input[type="radio"] {
   padding: 16px;
   background: #f6e9bb;
   border-radius: 8px;
-}
-.review-page {
-  max-width: 850px;
-}
-.review-item {
-  padding: 25px;
-  background: var(--paper);
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  margin: 25px 0;
-  overflow-wrap: anywhere;
-}
-.review-item .actions {
-  margin-top: 15px;
-}
-.review-item h2 {
-  font-size: 1.5rem;
-}
-.review-item pre {
-  white-space: pre-wrap;
-  font: inherit;
-}
-.review-item label {
-  margin-top: 14px;
-}
-.review-status {
-  text-transform: capitalize;
 }
 .ai-result {
   margin-top: 16px;
@@ -918,9 +854,6 @@ footer .footer-brand {
   .budget {
     padding: 20px;
   }
-  .community-layout {
-    gap: 25px;
-  }
   .preview-grid {
     grid-template-columns: 1.3fr 1fr;
   }
@@ -961,14 +894,8 @@ footer .footer-brand {
     gap: 14px;
   }
   .preview-grid,
-  .community-layout,
   .journey-layout {
     grid-template-columns: 1fr;
-  }
-  .community-teaser {
-    border-left: 0;
-    border-top: 1px solid var(--line);
-    padding: 24px 0 0;
   }
   .story-card {
     padding: 22px;
@@ -1045,9 +972,6 @@ footer .footer-brand {
   }
   .lesson-row h2 {
     font-size: 1.15rem;
-  }
-  .contribution-form {
-    padding: 22px 18px;
   }
   .section-head {
     align-items: flex-start;

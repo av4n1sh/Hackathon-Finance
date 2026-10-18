@@ -2,13 +2,12 @@
 const http = require("node:http");
 const fs = require("node:fs");
 const path = require("node:path");
-const crypto = require("node:crypto");
 const { loadEnvironment } = require("./lib/config");
-const { createCommunity, fail } = require("./lib/community");
+const { createRemoval, fail } = require("./lib/legacy-removal");
 const { explain } = require("./lib/guide");
 loadEnvironment();
 function createApp(options = {}) {
-  const community = createCommunity(
+  const removeContribution = createRemoval(
     options.dataDirectory || path.join(__dirname, "data"),
   );
   const publicRoot = fs.realpathSync(path.join(__dirname, "public"));
@@ -37,19 +36,6 @@ function createApp(options = {}) {
     } catch {
       throw fail(400, "Send a JSON object.");
     }
-  }
-  function authorize(req) {
-    const secret = options.reviewerKey ?? process.env.REVIEWER_KEY;
-    if (!secret || secret.length < 24)
-      throw fail(
-        503,
-        "Reviewer access is not configured. Set a REVIEWER_KEY of at least 24 characters on the server.",
-      );
-    const supplied = req.headers.authorization || "";
-    const digest = (value) =>
-      crypto.createHash("sha256").update(value).digest();
-    if (!crypto.timingSafeEqual(digest(supplied), digest(`Bearer ${secret}`)))
-      throw fail(401, "Reviewer key not accepted.");
   }
   return http.createServer(async (req, res) => {
     res.setHeader("X-Content-Type-Options", "nosniff");
@@ -82,23 +68,8 @@ function createApp(options = {}) {
         )
           throw fail(403, "Use this site to send a request.");
         const route = url.pathname;
-        const isReviewer =
-          route === "/api/review" || route.startsWith("/api/review/");
-        if (isReviewer) authorize(req);
-        if (route === "/api/community" && req.method === "GET")
-          return send(res, 200, { contributions: await community.published() });
-        if (route === "/api/community" && req.method === "POST")
-          return send(res, 201, await community.submit(await body(req)));
         if (route === "/api/community/remove" && req.method === "POST")
-          return send(res, 200, await community.remove(await body(req)));
-        if (route === "/api/review" && req.method === "GET")
-          return send(res, 200, { contributions: await community.list() });
-        if (/^\/api\/review\/[\w-]+$/.test(route) && req.method === "POST")
-          return send(
-            res,
-            200,
-            await community.moderate(route.split("/").pop(), await body(req)),
-          );
+          return send(res, 200, await removeContribution(await body(req)));
         if (route === "/api/explain" && req.method === "POST")
           return send(res, 200, await explain(await body(req)));
         throw fail(404, "This route is not available.");

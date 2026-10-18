@@ -1,12 +1,12 @@
 {
   "name": "harbor-academy",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "private": true,
   "scripts": {
     "dev": "node server.js",
     "start": "node server.js",
-    "test": "node --test test/core.test.js test/api.test.js test/ui.test.js",
-    "format": "prettier --write public/*.js public/*.html public/styles.css lib/*.js server.js test/*.js"
+    "test": "node --test test/*.test.js",
+    "format": "prettier --write public/*.js public/*.html public/*.css lib/*.js server.js test/*.js"
   },
   "engines": {
     "node": ">=18"

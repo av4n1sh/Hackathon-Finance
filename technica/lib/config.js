@@ -1,7 +1,7 @@
 "use strict";
 const fs = require("node:fs"),
   path = require("node:path");
-const names = ["GEMINI_API_KEY", "REVIEWER_KEY", "GEMINI_MODEL", "PORT"];
+const names = ["GEMINI_API_KEY", "GEMINI_MODEL", "PORT"];
 function parseEnvironment(text) {
   const result = {};
   for (const line of text.split(/\r?\n/)) {

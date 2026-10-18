@@ -1,0 +1,12 @@
+(function () {
+  const C = window.HarborContent;
+  function learn(saved, id) {
+    const lesson = C.lessons.find((l) => l.id === id);
+    if (!lesson)
+      return `<section class="page-intro"><span class="eyebrow">A helpful companion</span><h1>A question is a<br>good place to start.</h1><p>Short explanations for everyday choices. Explore on your own, or drop in during your adventure.</p>${saved.started ? '<a class="button secondary" href="#play/world">Return to my adventure →</a>' : ""}</section><div class="lesson-list">${C.lessons.map((l) => `<a class="lesson-row" href="#learn/${l.id}"><span class="number">${l.icon}</span><div><h2>${l.title}</h2><p>${l.intro.split(". ")[0]}.</p></div><span aria-hidden="true">${saved.learned.includes(l.id) ? "✓" : "↗"}</span></a>`).join("")}</div>`;
+    const source = C.sources[lesson.source];
+    return `<article class="lesson"><a class="text-button" href="#learn">← All money questions</a><span class="eyebrow" style="margin-top:24px">Learn · At your pace</span><h1>${lesson.title}</h1><p>${lesson.intro}</p><section class="example"><h2>A real-life example, with fictional amounts</h2><p>${lesson.example}</p></section><details class="optional"><summary>A little more detail</summary><p>${lesson.detail}</p></details><section class="practice"><h2>Try it in this situation</h2><p>${lesson.question}</p><div class="choices">${lesson.choices.map((choice, i) => `<button class="choice" data-lesson="${lesson.id}" data-answer="${i}">${choice}<span aria-hidden="true">↗</span></button>`).join("")}</div><div id="lesson-feedback" role="status"></div></section><p class="source">Supporting source: <a href="${source.url}" target="_blank" rel="noreferrer">${source.title} ↗</a><br>Checked October 17, 2026. Examples and practice questions are authored for Harbor.</p><div class="notice"><strong>Practice this in the story</strong><p>Day ${lesson.step + 1}: ${C.steps[lesson.step].title}.</p><a href="${saved.started ? "#play/world" : "#play/setup"}">${saved.started ? "Return to your saved decision" : "Start Your Money Adventure"} →</a></div><section style="margin-top:28px"><h2 style="font-size:1.25rem">Want a simpler explanation?</h2><p class="small muted">Optional AI rephrases this lesson. The game works without it. Only lesson content and fictional story context are sent; personal information is never requested.</p><button class="secondary" data-explain="${lesson.id}">Explain more simply</button><div class="ai-result" aria-live="polite"></div></section></article>`;
+  }
+
+  window.HarborLearn = learn;
+})();

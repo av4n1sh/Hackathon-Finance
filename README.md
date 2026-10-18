@@ -1,24 +1,19 @@
-# Harbor Academy
+# Harbor Academy · Harborbound
 
-**Practice everyday money choices. Learn as you play.**
+An everyday money RPG. Create a traveler, explore Tidehaven, meet eight characters, and practice financial decisions through five connected main quests and two optional side quests.
 
-A welcoming financial learning game with three destinations: **Play**, **Learn**, and **Community**. No account, real money, or API key is needed to play.
-
-From this folder, run:
+**Play · Learn · Quest Journal**
 
 ```powershell
 npm.cmd start
 ```
 
-Open **http://localhost:3000** and keep the terminal running. Requires Node.js 18+. Runtime has no package dependencies. In VS Code, **Start Harbor Academy server** starts the app; **Launch Chrome against localhost** opens the browser after the server is running.
+Open **http://localhost:3000**. Node.js 18+ is required; runtime has no package dependencies. Keep the terminal running. In VS Code, **Start Harbor Academy server** starts the app; **Launch Chrome against localhost** opens the browser after it starts.
 
-For development checks:
+Arrow keys or WASD move your character; **E** starts a nearby conversation. Touch direction buttons, destination buttons, and a travel menu offer alternative controls.
 
-```powershell
-npm.cmd --prefix technica ci
-npm.cmd test
-```
+For checks: `npm.cmd --prefix technica ci`, then `npm.cmd test`.
 
-See [the application guide](technica/README.md) for the game, contribution review, optional Gemini configuration, architecture, and verification limits. See the [volunteer usability script](technica/USABILITY.md) for the planned human checks.
+See the [implementation and setup guide](technica/README.md) and [volunteer usability script](technica/USABILITY.md). No account, API key, or real money is needed to play.
 
-The previous experience is recoverable at commit `84315f4` and tag `archive/harbor-before-adventure-2026-10-17`. Use `git show archive/harbor-before-adventure-2026-10-17:technica/README.md` to inspect its documentation without replacing your checkout.
+Recovery tags preserve the earlier versions: `archive/harbor-before-rpg-2026-10-17` and `archive/harbor-before-adventure-2026-10-17`.

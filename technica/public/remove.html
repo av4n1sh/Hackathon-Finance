@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <title>Past contribution removal · Harbor Academy</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="remove.js" defer></script>
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="brand" href="/#play">harbor academy</a
+      ><a href="/#journal">Return to your Journal</a>
+    </header>
+    <main>
+      <section class="lesson">
+        <h1>Remove a past contribution</h1>
+        <p>
+          Community submissions have been retired. If you contributed in an
+          earlier version, your saved receipt still lets you remove the original
+          from this server. No past contributions are published by the current
+          app.
+        </p>
+        <form id="removal-form">
+          <div class="field">
+            <label for="id">Contribution ID</label
+            ><input
+              id="id"
+              name="id"
+              required
+              maxlength="80"
+              autocomplete="off"
+            />
+          </div>
+          <div class="field">
+            <label for="code">Removal code</label
+            ><input
+              id="code"
+              name="removalCode"
+              required
+              maxlength="100"
+              autocomplete="off"
+            />
+          </div>
+          <button>Remove my contribution</button>
+          <p id="removal-status" role="status"></p>
+        </form>
+      </section>
+    </main>
+  </body>
+</html>

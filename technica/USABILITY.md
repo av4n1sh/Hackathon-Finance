@@ -1,28 +1,24 @@
-# Volunteer usability check · Harbor Academy
+# Harborbound volunteer usability script
 
-Status: prepared script; no volunteer sessions have been conducted or results invented.
+Status: prepared script; no volunteer sessions or outcomes are claimed.
 
-Allow about 10–15 minutes. Explain: “We are testing the activity, not you. All money is fictional. You may pause or skip any task. Please avoid sharing personal financial details.” Obtain permission before taking notes. Offer keyboard-only, phone, screen-reader, assisted, or asynchronous participation according to the volunteer’s preference. No demographic information is required.
+Allow 15–20 minutes. Explain: “We’re testing the game, not you. The money and story are fictional. You may pause or skip any task. Please avoid sharing private financial details.” Ask permission before recording notes. Offer keyboard, touch, screen-reader, assisted, or asynchronous participation according to the volunteer’s preference. No demographic information is required.
 
-Ask the volunteer to do these tasks, without explaining where to click:
+1. Describe what the title screen suggests this game is about. Create a traveler without entering a real name or creating an account.
+2. Walk around the harbor. Find a character using the map and then the named travel menu. Try E and the talk button. Observe whether collision or controls cause confusion.
+3. Find the current main quest. Describe what the $80 wallet and protected $60 mean. Visit a later character and describe why the main story cannot skip ahead.
+4. Make a decision. Explain what changed in the wallet and the situation. Reconsider a decision or reflection without restarting the game.
+5. Open a field note, return to the conversation, then refresh. Check that the character, pending decision, and activity state persist.
+6. Try arranging the practice envelopes. Ask whether it is clear that this separate board does not change the quest wallet. Build the full-price receipt and inspect the suspicious-message clues when reached.
+7. Complete the five main quests. Describe the outcome and whether feedback was understandable or judgmental. Check that waiting on the purchase feels like a valid ending.
+8. Find Pip and rebuild the ledger. Find Fern and compare two water-delivery plans. Explain which funds belong to those side quests. Deliberately choose an over-budget kit and try again.
+9. Open the Quest Journal. Find an earned item, equip it, and use its field note. Explain how XP and levels relate to learning. Repeat a completed activity and check that the reward does not duplicate.
+10. Replay an earlier chapter from the Journal. Describe which current decisions reset and which discoveries remain.
+11. On a phone, inspect map controls, conversations, long choices, inventory, and text at increased size. Look for clipped content and horizontal overflow. Try the named destination menu if a small map target is difficult.
+12. With a keyboard or the volunteer’s preferred assistive input, navigate the three tabs, talk, make a choice, and use the Journal. Check focus after a conversation, decision, retry, and return from Learn. With reduced motion enabled, verify that movement interpolation and ambient animation stop.
 
-1. Look at the first screen. Describe what you think this website helps you do.
-2. Start a story without making an account. Describe the starting money and what is already set aside.
-3. Choose a path through the first two days. Explain what changed after one choice.
-4. Open an explanation while playing, then return. Check whether the story is where you left it.
-5. Compare the two pass prices. Describe the fee and a reason someone might choose either option.
-6. Respond to the suspicious payment request. Try a different choice or reconsider a reflection.
-7. Complete the story. Describe the outcome and one skill you practiced. Ask whether any message felt judgmental or confusing.
-8. Refresh and find saved progress. Describe where you expect progress to be stored.
-9. Suggest a fictional money situation. Explain the two permissions before submitting. Save the receipt and find the removal form. For pilot sessions, use a designated local test server and explain how test submissions will be handled.
-10. Navigate the three tabs and complete a decision with a keyboard or the volunteer’s usual assistive input. On a phone, check text, buttons, budget, forms, and horizontal overflow. With reduced motion enabled, check that transitions stop.
+Ask afterward: “What helped you understand a decision?”, “What felt like extra work?”, “Which situation or access need is missing?”, and “What wording should change?” Do not ask for personal account details or proof of circumstances.
 
-For the expanded game, ask volunteers to arrange the practice envelopes, assemble the online receipt, and inspect the suspicious message. Check whether they understand that the envelope board is separate from the story balance, why a stamp is earned, and that the message has no running timer. Ask them to revisit a completed map stop, explain which later choices reset, and find their retained stamps in the passport. Verify that repeating an activity does not add a duplicate stamp. Observe whether the map, celebrations, or additional controls help or distract; do not assume they improve learning without testing.
+Record independent/assisted/not-completed tasks, observed hesitation, misunderstood language, access barriers, and concrete suggestions. Distinguish observation from interpretation. Do not infer demographic effectiveness from a small sample. Invite voluntary feedback through adult learning groups, accessibility groups, students, and people with varied payment and income arrangements; offer accessible formats without requiring demographic disclosure. Incorporate recurring barriers into reviewed, source-checked changes, then invite participants to verify the revisions. Publish only anonymous findings with permission and keep private research notes outside this repository.
 
-Ask afterward: “What situation is missing?”, “Which wording could be clearer?”, “Did anything make an assumption about you?”, and “What would make it easier to participate?” Do not ask participants to prove or disclose their circumstances.
-
-Record task completion (independent / assisted / not completed), exact points of hesitation, misunderstood text, access barriers, device/input context if volunteered, and concrete requested changes. Distinguish observed behavior from interpretation. Do not infer demographic effectiveness from a small sample.
-
-Separately, have an authorized reviewer verify a test suggestion stays private, then review, draft, and publish an adaptation with permission; verify a private-only suggestion cannot publish. Confirm an invalid reviewer key is rejected and the removal receipt removes the published adaptation too. Use fictional test text and keep reviewer credentials out of notes.
-
-After testing, prioritize fixes, review financial claims against linked sources, invite participants to verify edits, and publish only findings and contributions they consented to share. Do not label proposed changes as shipped until they are implemented.
+If testing migration from an earlier contribution version, use only disposable fictional test data. Confirm the old public/reviewer endpoints are unavailable and an original saved receipt can still remove its private record. Keep removal codes out of research notes.

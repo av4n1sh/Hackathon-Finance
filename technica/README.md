@@ -1,116 +1,125 @@
-# Harbor Academy · Everyday money practice
+# Harborbound · An everyday money RPG
 
-Harbor helps people practice everyday money decisions in a welcoming environment. The central activity is **Your Money Adventure**, a connected fictional week with five decisions. The interface has only **Play**, **Learn**, and **Community**; a small header panel holds progress.
+Harbor Academy now centers on an explorable RPG called **Harborbound**. Create a traveler, walk through Tidehaven, speak to its characters, complete money-decision quests, and collect learning equipment. The three destinations are **Play**, **Learn**, and **Quest Journal**. Community submission and reviewer interfaces have been retired.
 
 ## Run
 
-Requires Node.js 18+. From the workspace root, run `npm.cmd start` and open **http://localhost:3000**. No installation or credentials are needed for runtime. The server binds to `127.0.0.1`; `PORT` defaults to 3000. Restart it after changing server code or the port.
+Requires Node.js 18+. From the repository root, run `npm.cmd start`, then open **http://localhost:3000**. There are no runtime package dependencies or required credentials. The server binds to `127.0.0.1`; `PORT` defaults to 3000. Restart after server changes.
 
-For development: `npm.cmd --prefix technica ci`, then `npm.cmd test`. `npm.cmd --prefix technica run format` formats source using Prettier. The only development dependencies are jsdom for DOM checks and Prettier for formatting.
+For development: `npm.cmd --prefix technica ci`, then `npm.cmd test`. `npm.cmd --prefix technica run format` formats source. jsdom and Prettier are the only development dependencies.
 
-## One complete learning journey
+## Explore Tidehaven
 
-Choose a bag ($48) or raincoat ($42) as the useful purchase in the same five-day story. Start with a clearly labeled simulated $140: $60 set aside for food, shared household costs, and caregiving; $80 available for decisions.
+Choose a nickname and one of three roles: **Wayfinder**, **Keeper**, or **Tinkerer**. Roles change the character’s appearance and framing; every role has access to all quests. No real name or account is needed.
 
-1. Pause or keep a $12 subscription.
-2. Pay for an accessible shuttle or rearrange a caregiving visit for a free ride tomorrow.
-3. Compare a $12 cash-counter pass with a $15 online option including its fee.
-4. Independently verify a suspicious gift-card demand, check with someone, or see the fictional consequence of paying it.
-5. Buy a durable item, pay $32 for a secondhand item plus repair, or wait and keep a buffer.
+The 16-by-11 tile world includes paths, a grove, cottages, a market, a garden, and a harbor pier. Trees, buildings, water, and characters block movement. Shortest-path search finds a clear adjacent tile when using destination controls.
 
-Earlier spending changes which final purchases remain affordable. Unaffordable options explain the gap. Each choice immediately changes the budget and gives an authored consequence. Contextual reflections ask players to identify the actual trade-off; correct reasoning earns a named skill badge regardless of spending. Players can retry the current choice, revisit previous days, or replay a different route. There are no wealth rankings, timers, streaks, or penalties for leaving.
+- Focus the world and use **arrow keys or WASD** to walk one tile at a time. **E** speaks to a neighboring character.
+- Use the visible direction buttons on touch or with a keyboard.
+- Click a walkable tile to move there, or a character to travel beside them and open a conversation. Destination travel is immediate rather than a timed walking sequence.
+- The **Travel to a character** menu provides named destinations and an alternative to precise map selection. Future quest givers can be visited; they explain the current prerequisite instead of letting the main story be skipped.
 
-All amounts are integer cents in deterministic code. Restoring a save replays validated choices and recomputes totals rather than trusting saved balances. The ending describes the chosen outcome, costs, and skills. A delayed purchase is a valid ending.
+Walking updates the existing player sprite so movement can interpolate without rebuilding the map. Movement controls are active only while focus is in the world or direction controls, and do not intercept typing in a form. Reduced-motion styles stop interpolation and ambient animation.
 
-### More ways to play
+## Main quest chain
 
-The harbor map shows five illustrated stops, your current location, and the route you chose. Revisit any completed stop to replay from that day; later decisions and activities reset, while earned learning stamps remain in your passport. Upcoming stops are shown without allowing the story to be skipped.
+Choose a useful bag ($48) or raincoat ($42). Start with a simulated $140: $60 protected for food, shared household costs, and caregiving, and $80 for the main quest decisions.
 
-Three optional hands-on activities make the skills something you do:
+| Quest giver | Decision | Equipment discovery |
+| --- | --- | --- |
+| Mara, lighthouse keeper | Pause or keep a $12 subscription | Planner’s compass |
+| Jo, ferry guide | Pay for an accessible trip or rearrange a visit | Flexible-route boots |
+| Inez, ticket merchant | Compare a $12 counter pass with a $15 online pass including its fee | Full-price lens |
+| Wren, postmaster | Independently verify a suspicious gift-card demand or see its fictional consequence | Verification lantern |
+| Tavi, repair merchant | Buy a durable item, buy secondhand with a repair, or wait | Repairer’s kit |
 
-- **Envelope arranger (day 1):** move $10 notes between practice envelopes to cover essentials and a purchase. Several splits work. This separate board does not change the story’s established $60/$80 starting split.
-- **Receipt builder (day 3):** add and remove the advertised pass and service charges to reveal the full online price.
-- **Message detective (day 4):** inspect urgency and a gift-card request, then choose an independent verification route. The message’s deadline is fictional; no timer runs.
+Choices immediately affect the fictional wallet and which later purchases are affordable. Consequences explain access, time, enjoyment, quality, and cost without treating the least expensive choice as universally correct. Reflections ask players to explain the actual trade-off. Reconsidering a decision is allowed. A delayed purchase is a valid ending.
 
-Five reasoning badges and these three activities form eight unique passport stamps. Milestones progress from **Ready to explore** to **Curious explorer**, **Money navigator**, and **Everyday explorer**. Stamps reflect demonstrated skills, not money left. They can be earned once each; repeating an activity does not generate extra rewards. A visible stamp meter and dismissible celebration mark progress. The passport also remembers distinct completed choices across replays. Everything stays local to this browser; previous saves are supported. All new controls work with buttons and keyboard focus, with text outcomes and reduced-motion support.
+Three optional activities remain inside the relevant conversations: move $10 notes between practice envelopes, build the full-price receipt, and inspect suspicious-message clues. The envelope board is separate from the established story budget and says so explicitly.
+
+The **Quest Journal** replaces Community. It contains the current objective, completed decisions and their consequences, side quests, all eight discoverable equipment items, people met, and the existing skill-stamp passport. Replaying a completed chapter clears later current-story choices and activities; collected learning achievements remain.
+
+## Optional side quests
+
+- **Pip’s scattered ledger:** collect three receipts ($7, $5, $3) to reconstruct a $15 spending record and discover the Receipt pouch.
+- **Fern’s garden delivery:** choose drinking water and a step-free delivery route within $18 of separate fictional garden funds. A refill plus delivery costs $10 and takes extra time; sealed water plus delivery costs $15. Both work. Choosing both water options plus delivery exceeds the budget. Completing a workable kit discovers the Garden crest.
+- **Sol, harbor cartographer:** explains exploration, the journal, and how equipment opens field notes.
+
+Side activities never debit the main wallet. Current side-quest selections and lifetime achievements are stored separately, so trying a different kit does not erase an earned reward or incorrectly change the underlying success rules.
+
+## Experience, levels, and equipment
+
+All progression is deterministic and local to this browser:
+
+- First conversation with each of eight characters: **5 XP once**.
+- Each unique main chapter completed: **20 XP once**.
+- Each demonstrated reasoning skill: **25 XP once**.
+- Each of three hands-on activity stamps: **30 XP once**.
+- Each of two optional side quests: **40 XP once**.
+
+Levels begin at 1 and advance every 100 XP, up to level 5. XP is derived from unique discoveries, not an incrementable cash-like counter. Repeated conversation, replay, alternate choices within the same chapter, or toggling an activity cannot generate repeated rewards. There is no leaderboard, combat, health tied to wealth, mandatory countdown, streak, or penalty for leaving.
+
+Equipment is a learning reminder. Equip an unlocked tool in the Journal, then use its field note from the quest tracker or inventory. The tools do not alter balances, bypass verification, or provide real-world financial powers. A notebook is available from the start. The original eight reasoning/activity stamps remain a separate view of practiced skills.
 
 ## Learn and inclusion
 
-Six short lessons address planning, fees, safe payments, irregular income, borrowing, and unexpected costs. Each has a direct explanation, fictional example, optional detail, practice with feedback, supporting source, and a link to the relevant story day. Links return to the current saved decision; they do not skip forward or overwrite the story.
+Six short lessons cover spending plans, fees, suspicious requests, irregular income, borrowing, and unexpected costs. Each has an explanation, fictional example, optional detail, practice feedback, source link, and a return link. Leaving a conversation for Learn preserves the decision, practice inputs, character position, and conversation; these also restore after refresh.
 
-Content includes cash payments, changing income, shared bills, caregiving, transport access, and time costs. It does not assume a bank account, credit card, car, fixed salary, family support, or a fixed savings percentage. Feedback explains resource gaps respectfully and treats access and enjoyment as valid factors.
+The story includes cash, shared costs, caregiving, changing income, time, and accessibility without requiring a bank account, card, car, predictable salary, or family support. No fixed savings percentage is prescribed. A shortage of resources is not described as a personal failure.
 
-The interface uses a system sans-serif with Georgia reserved for major headings, cream and forest green, large targets, semantic headings, labeled controls, a skip link, visible keyboard focus, text descriptions of all budget information, live feedback, responsive layouts, and reduced-motion CSS. Three-tab transitions slide in the navigation direction. Game state survives tab changes and refresh; contribution drafts remain in memory across tabs, without storing potentially private text in localStorage.
+The cream/forest-green interface uses system sans-serif controls, visible focus, labeled inputs and buttons, text descriptions of positions and funds, live feedback, a skip link, touch direction controls, named destinations, responsive layouts, and reduced-motion support. Small decorative map labels have a named destination-menu alternative. English lesson and world catalogues live in `content.js` and `world.js`; interface strings also require extraction and human review for a full translation. No unreviewed language selector is offered.
 
-English interface and learning copy are centralized in `public/content.js` where practical. App interface strings remain English in `app.js`; a full localization pass must extract those too. No additional language is offered: a translation must include the interface, stories, feedback, consent, removal, and core lessons and receive human review before release.
+Supporting primary sources checked during the preceding rebuild on October 17, 2026 remain linked in the lessons:
 
-Supporting primary sources checked October 17, 2026:
+- [CFPB Your Money, Your Goals toolkit](https://www.consumerfinance.gov/consumer-tools/educator-tool/your-money-your-goals/toolkit/): planning, timing, fees, and borrowing comparisons.
+- [CFPB emergency fund guide](https://www.consumerfinance.gov/an-essential-guide-to-building-an-emergency-fund/): variable circumstances and unexpected expenses.
+- [FTC gift-card impersonation warning](https://consumer.ftc.gov/consumer-alerts/2026/01/no-thats-not-your-boss-asking-you-buy-gift-cards): urgency, gift-card demands, and independent verification.
 
-- [CFPB Your Money, Your Goals toolkit](https://www.consumerfinance.gov/consumer-tools/educator-tool/your-money-your-goals/toolkit/) supports spending plans, cash-flow timing, fees, and borrowing-cost comparisons.
-- [CFPB emergency fund guide](https://www.consumerfinance.gov/an-essential-guide-to-building-an-emergency-fund/) supports adapting savings to circumstances and planning for unexpected costs.
-- [FTC gift-card impersonation warning](https://consumer.ftc.gov/consumer-alerts/2026/01/no-thats-not-your-boss-asking-you-buy-gift-cards) supports pausing urgent requests, independent verification, and contacting a gift card company after a scam.
+Quests, amounts, characters, and place names are fictional authored content. They do not claim community participation or represent testimonials.
 
-Amounts, narrative, questions, and choices are authored fictional examples, not quotations or personal financial recommendations. Educational content remains available without AI.
+## Optional Gemini field notes
 
-## A real contribution path
+Only **Explain more simply** in Learn uses Gemini. Copy `.env.example` to `.env` only if `.env` does not already exist. Configure both `GEMINI_API_KEY` and an enabled `GEMINI_MODEL` to enable it. No default model is assumed; missing configuration returns authored guidance. Configuration refreshes on API requests; externally supplied environment variables take priority.
 
-Community prominently invites an everyday situation, what makes it difficult, what someone should understand, and optional wording or accessibility improvements. No demographic, contact, or account information is requested. The form asks contributors to leave private details out and permits a nickname or anonymous public credit.
+The server uses the documented [generateContent endpoint](https://ai.google.dev/api/generate-content), with authored lesson context and, when relevant, a restored fictional consequence and recomputed amount. Character names, role, movement, inventory, side quests, private financial information, and free-form user text are not sent. Incomplete, oversized, failed, new-number, or generated-source-URL responses fall back to authored material. AI output is labeled, may make mistakes, and never controls arithmetic, XP, levels, equipment, quest transitions, or answers. No authenticated provider call was made during this rebuild; success/failure behavior is tested with mocks.
 
-The workflow is **Submit → Review → Edit into a learning scenario → Publish with permission**:
+Capital One, ETF/tokenization labs, investigations, ElevenLabs, and Backboard remain absent.
 
-- `POST /api/community` validates fields and required adaptation consent, generates a receipt, and persists a private original. Public-publication consent is separate and optional.
-- `GET /api/community` exposes only published, edited learning notes and the contributor’s chosen credit. Original text, review state, and removal hashes never appear there.
-- A reviewer uses **Reviewer access** in the footer (`/review.html`). Authentication is checked on every reviewer API action. The secret stays in page memory, is cleared on locking/leaving, and is never put in browser storage.
-- Reviewers mark a submission reviewed, save a learning draft with a fictional situation, explanation, and description of its contribution, then explicitly confirm source/privacy review before publishing. The server refuses skipped stages and publication without the contributor’s permission. Reviewers can unpublish or decline a suggestion.
-- Published adaptations become **Community learning notes**, visible in Community. Incorporating one into the shipped five-day game requires a deliberate source-code change and review; publication does not silently rewrite the game or claim that it has.
-- The submitter receives a one-time removal code and contribution ID, with a downloadable receipt. `POST /api/community/remove` verifies the receipt, then removes both the stored original and any public adaptation from this server. The code itself is never stored, only its SHA-256 hash. Keep the receipt private: no email is collected to recover it. Removal cannot erase copies someone downloaded elsewhere or independently managed backups.
+## Retired Community data
 
-Storage is `technica/data/contributions.json`, excluded from Git. Writes are serialized and use a temporary file plus atomic rename; successful submission is returned only after disk persistence. Corrupt storage produces a failure instead of overwriting records. The local prototype supports **one Node process on a persistent filesystem**, not multiple workers or ephemeral/serverless hosting. Back up this directory privately if operating a real pilot, and apply receipt-based removal to retained backups. The queue is capped at 1,000 records. Suggestions remain stored until receipt-based removal; declining does not delete them.
+The contribution form, public listing, moderation APIs, reviewer pages, and reviewer-key configuration are removed. `GET/POST /api/community` and reviewer routes return 404. Old `#community` links open the Journal. No existing private records are loaded by normal play, published, or deleted as part of the upgrade.
 
-To enable review, copy `.env.example` to `.env` **only if `.env` does not already exist**, then enter a random `REVIEWER_KEY` of at least 24 characters. For example, generate a new value locally with `node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))"` and enter it directly in `.env`. Do not commit or share it. Reviewer access fails closed while the key is absent or too short. This shared-secret review model is appropriate for a local hackathon prototype; public hosting needs individual reviewer authentication, HTTPS, and an operational moderation process.
+The footer’s **Past contribution removal** link (`/remove.html`) retains a minimal receipt-based removal flow at `POST /api/community/remove`. It checks the original contribution ID and hashed removal code, serializes writes, and atomically updates the ignored `data/contributions.json` file. It cannot create, list, review, or publish anything. Private files and any independently managed backups remain the operator’s responsibility; a removal should also be applied to those backups. The current app requires no reviewer secret.
 
-The empty public state explicitly says there are no published contributions. Team-written topic prompts are labeled as prompts. There are no invented contributors or testimonials, and no claim of representing a community.
-
-## Optional Gemini assistance
-
-Set `GEMINI_API_KEY` and an enabled `GEMINI_MODEL` in `.env` to use **Explain more simply** in a lesson. There is no assumed default model. Missing configuration, provider failures, incomplete output, oversized output, new numeric values, and generated source URLs return the authored explanation. Configuration reloads on API requests; externally supplied environment variables take priority.
-
-The server calls Gemini’s documented [generateContent endpoint](https://ai.google.dev/api/generate-content) with a system instruction and authored lesson context. It may include a restored, recomputed fictional consequence and budget; it never sends community suggestions, private financial details, or free-form user prompts. Output is labeled as optional AI and may still contain mistakes. It never controls balances, allowed actions, reflection answers, badges, or saved progress. The authored lesson and its sources remain the reference.
-
-No authenticated Gemini call was made during this rebuild. Provider behavior is verified with mocked success/failure responses, not claimed as live integration proof. The main journey has no provider dependency.
-
-Capital One Nessie was removed because account loading and transaction browsing added setup without helping this fictional decision story. Its adapter, routes, configuration, and main experience are gone. ETF and tokenization labs, investigations, and the separate Safety Vault are removed; useful safety guidance now lives in Learn. ElevenLabs and Backboard remain absent. Obsolete award descriptions have been removed.
-
-## Architecture and boundaries
+## Architecture
 
 ```text
-server.js                 Local HTTP server, same-origin checks, rate/body limits, reviewer auth
-lib/community.js          Validated private storage, moderation transitions, removal receipts
-lib/guide.js              Optional bounded Gemini rephrasing with authored fallback
-lib/config.js             Server-only .env parsing and refresh
-public/content.js         English lesson/story/goal/reflection catalogue and sources
-public/game.js            Shared deterministic state transitions, restoration, cents arithmetic
-public/play.js            Harbor map, hands-on activities, stamp meter, and skill passport
-public/app.js             Play/Learn/Community UI, routing, browser progress, draft memory
-public/review.html/js      Protected reviewer workflow UI (API access requires the key)
-public/styles.css         Responsive cream/green interface and reduced motion
-test/*.test.js            Branch arithmetic, API/storage/auth, and DOM journeys
+server.js                 Local static HTTP server, bounded API requests, same-origin checks
+lib/config.js             Server-only optional configuration
+lib/guide.js              Bounded optional Gemini explanation with authored fallback
+lib/legacy-removal.js      Receipt-only removal of old private contributions
+public/content.js         Money story, lessons, reflections, practice activities, sources
+public/game.js            Integer-cent money rules, activities, story restore and rewind
+public/world.js           Terrain, characters, roles, side quests, and equipment catalogue
+public/rpg.js             Collision/pathfinding, character restore, side quests, unique XP
+public/rpg-view.js        Overworld, conversations, quest tracker, inventory, Journal
+public/learn-view.js      Beginner lessons and return links
+public/play.js            Shared practice-activity and skill-passport views
+public/app.js             Routing, input, local persistence, movement updates, UI coordination
+public/styles.css/rpg.css Cream/green interface, code-drawn tile world, responsive controls
+test/*.test.js            Deterministic, HTTP, legacy-removal, provider, and DOM checks
 ```
 
-Progress and badges belong to this browser and site origin. They are editable prototype data, not secure credentials or verified achievements. Clearing site storage removes them. Old prototype progress is left untouched under its previous keys; it is not converted into badges for new skills. No new disk-based learner profiles or cookies are created. Storage failures are visible and in-memory play still works.
+Runtime has no external packages, downloaded game engine, external font, remote graphics, or audio requirement. The tile world and sprites are drawn in HTML, CSS, and inline SVG. The previous standalone illustration remains in Git history; the active RPG uses its own world graphics.
 
-Static files are confined to the public directory, including realpath checks. API requests have a 16 KB body limit, same-origin checks, and an in-memory limit of 100 requests per IP per minute. Reviewer responses and API data are not cached; CSP restricts scripts and network requests to this server. These local prototype controls do not replace production operations.
+The existing `harbor-adventure-v1` browser save is migrated in place. Earlier stories and stamps remain valid; a missing character save creates a traveler. Invalid character data resets the character independently of valid story progress. Progress is browser-local, editable prototype data, with no account synchronization or secure achievements. Clearing site storage removes it. Blocked storage shows a message and allows in-memory play.
 
-## Verification and participation plan
+API bodies are capped at 16 KB and requests at 100 per IP per minute. Static paths are confined to the public directory with realpath checks, and CSP confines scripts and connections to this server. Legacy disk removal assumes one Node process on persistent local storage. Public hosting is not configured by this delivery.
 
-Run `npm.cmd test` from the root. Checks cover every affordable game branch for both goals, integer-cent conservation, unaffordable paths, reasoning badges, retry/restoration, lesson links, missing-provider behavior, private contribution persistence across server instances, concurrent submissions, storage failure, moderation authorization, consent/stage enforcement, publication/unpublication, removal, request limits, DOM completion, navigation/focus, input labels, draft preservation, and safe rendering of submitted text.
+## Validation and handoff
 
-No connected browser was available during this rebuild. jsdom does not render CSS; desktop/mobile appearance, real keyboard operation, screen-reader behavior, and motion quality still require manual verification. No volunteer usability sessions or demographic effectiveness claims are reported. The [usability script](USABILITY.md) defines the outstanding human checks.
+Automated tests cover all affordable main-story branches, integer-cent conservation, reflections, restoration/rewind, activity outcomes, world dimensions, collisions, reachable destinations, side-quest totals, unique rewards, locked equipment, character restore, retired endpoints, legacy receipt removal, request limits, provider failures, character creation, keyboard/touch events, full NPC quest completion, Learn return, Journal replay, and stored-progress compatibility.
 
-Invite voluntary feedback through local community organizations, disability/accessibility groups, adult learning programs, students, and people with different payment and income arrangements. Ask about access needs and preferred participation format without requiring demographic disclosure. Offer a short session, an asynchronous text version, or an assisted walkthrough. Explain what will be recorded, request consent, allow skipping any task, and offer attribution only with permission. Avoid recruiting through claims that a group is represented here.
+No connected browser was available. jsdom cannot verify rendered art, phone overflow, real keyboard timing, screen-reader interaction, or animation quality. These are outstanding manual checks, not claimed completed. No volunteer research or demographic effectiveness is fabricated. See [the usability script](USABILITY.md).
 
-Record observed task completion, confusion, inaccessible controls, unfamiliar language, and suggested situations without personal financial details. Review suggestions, prioritize recurring barriers with participants, edit and source-check proposed scenarios, then seek publication permission. Return a plain-language change summary to volunteers who opt in through an independently managed contact process. Keep research notes outside this public repository; publish only consented, anonymous findings. Do not call this plan completed research.
-
-## Recovery and handoff
-
-Before rebuilding, the clean baseline was preserved at commit `84315f4` and tag `archive/harbor-before-adventure-2026-10-17`. The archive retains the earlier implementation and documentation. Current runtime has no external dependencies. This delivery updates the GitHub source repository; it does not create a public hosting deployment.
+The pre-RPG experience is preserved at tag `archive/harbor-before-rpg-2026-10-17` (commit `ea69b92`). The earlier baseline remains at `archive/harbor-before-adventure-2026-10-17`. This change is delivered through the existing GitHub repository, without a separate hosting deployment.

@@ -85,7 +85,7 @@ test("configuration preserves blank lines, trims values, and excludes removed pr
     parseEnvironment(
       'GEMINI_API_KEY=\nGEMINI_MODEL="gemini-example"\nREVIEWER_KEY= abc # comment\nCAPITAL_ONE_API_KEY=ignored',
     ),
-    { GEMINI_API_KEY: "", GEMINI_MODEL: "gemini-example", REVIEWER_KEY: "abc" },
+    { GEMINI_API_KEY: "", GEMINI_MODEL: "gemini-example" },
   );
 });
 
