@@ -2,6 +2,22 @@
 
 Harbor Academy now centers on an explorable RPG called **Harborbound**. Create a traveler, walk through Tidehaven, speak to its characters, complete money-decision quests, and collect learning equipment. The three destinations are **Play**, **Learn**, and **Quest Journal**. Community submission and reviewer interfaces have been retired.
 
+## Lanternwake: a playable opening
+
+The primary opening now invites the player to bring three festival lanterns back to life. **Start the festival** begins immediately with a default traveler; character customization remains optional. The festival is available alongside the existing story without requiring its five conversations first. Its objectives appear above the collapsed story tracker.
+
+Three different activities drive progress:
+
+1. **Lantern workshop:** choose a lens, frame, and delivery plan within a separate fictional $20 fund. The reclaimed lens includes both an $8 price and a $3 repair. Parts and delivery choices produce eight combinations, five of which fit the fund. The visible receipt includes every charge. Completing a workable plan lights the cottage lantern.
+2. **Festival ticket counter:** sell three $4 tickets to a fictional visitor who paid $20. Build the $8 change using $5, $2, and $1 notes. Undo and clear controls allow trying different combinations. Incorrect change explains the arithmetic and allows a retry. Completion lights the market.
+3. **Lantern delivery:** move a crate through a small grid with blocked stairs. The short route takes six steps and uses a $2 bridge pass; a free detour takes eight steps. Both are valid. The separate delivery fund is $2, and its pass is charged once per attempt. Direction buttons and arrow keys move the crate without moving the overworld character. Completion lights the pier.
+
+The harbor’s lanterns, light glows, and colored bunting change as challenges are completed. The world heading and objective list react to completion, and the Journal records the restored lights. Story choices also leave a short visible record under the world. No challenge changes the main quest wallet or uses a countdown.
+
+Five hidden postcards provide authored learning reminders. Pick them up by stepping onto their tile or using their named map button. Each grants 5 XP once; finding three unlocks a cosmetic fox companion. A gull is available from the start, and players can travel alone. Companions follow the character without changing money rules or quest access.
+
+Each unique festival challenge grants 30 XP once. Restoring all three discovers the **Lanternwake pin**, bringing the equipment catalogue to nine items. Current challenge inputs are stored separately from first successful solutions. Replay can try another build, note combination, or route while retaining the original completion reward; it cannot produce repeated XP. Restore validates the saved costs and route evidence rather than trusting a completed flag. Corrupt festival data resets independently of valid story and character data.
+
 ## Run
 
 Requires Node.js 18+. From the repository root, run `npm.cmd start`, then open **http://localhost:3000**. There are no runtime package dependencies or required credentials. The server binds to `127.0.0.1`; `PORT` defaults to 3000. Restart after server changes.
@@ -37,7 +53,7 @@ Choices immediately affect the fictional wallet and which later purchases are af
 
 Three optional activities remain inside the relevant conversations: move $10 notes between practice envelopes, build the full-price receipt, and inspect suspicious-message clues. The envelope board is separate from the established story budget and says so explicitly.
 
-The **Quest Journal** replaces Community. It contains the current objective, completed decisions and their consequences, side quests, all eight discoverable equipment items, people met, and the existing skill-stamp passport. Replaying a completed chapter clears later current-story choices and activities; collected learning achievements remain.
+The **Quest Journal** replaces Community. It contains festival progress and the postcard album, the current story objective, completed decisions and their consequences, side quests, all nine equipment items, people met, and the existing skill-stamp passport. Replaying a completed chapter clears later current-story choices and activities; collected learning achievements remain.
 
 ## Optional side quests
 
@@ -56,8 +72,9 @@ All progression is deterministic and local to this browser:
 - Each demonstrated reasoning skill: **25 XP once**.
 - Each of three hands-on activity stamps: **30 XP once**.
 - Each of two optional side quests: **40 XP once**.
+- Each of three festival challenges: **30 XP once**; each hidden postcard: **5 XP once**.
 
-Levels begin at 1 and advance every 100 XP, up to level 5. XP is derived from unique discoveries, not an incrementable cash-like counter. Repeated conversation, replay, alternate choices within the same chapter, or toggling an activity cannot generate repeated rewards. There is no leaderboard, combat, health tied to wealth, mandatory countdown, streak, or penalty for leaving.
+Levels begin at 1 and advance every 100 XP, up to level 6. XP is derived from unique discoveries, not an incrementable cash-like counter. Repeated conversation, replay, alternate choices within the same chapter, or toggling an activity cannot generate repeated rewards. There is no leaderboard, combat, health tied to wealth, mandatory countdown, streak, or penalty for leaving.
 
 Equipment is a learning reminder. Equip an unlocked tool in the Journal, then use its field note from the quest tracker or inventory. The tools do not alter balances, bypass verification, or provide real-world financial powers. A notebook is available from the start. The original eight reasoning/activity stamps remain a separate view of practiced skills.
 
@@ -103,10 +120,12 @@ public/game.js            Integer-cent money rules, activities, story restore an
 public/world.js           Terrain, characters, roles, side quests, and equipment catalogue
 public/rpg.js             Collision/pathfinding, character restore, side quests, unique XP
 public/rpg-view.js        Overworld, conversations, quest tracker, inventory, Journal
+public/festival.js        Lantern builds, cash drawer, delivery routes, postcards, validation
+public/festival-view.js   Festival challenges, changing world, companions, postcard album
 public/learn-view.js      Beginner lessons and return links
 public/play.js            Shared practice-activity and skill-passport views
 public/app.js             Routing, input, local persistence, movement updates, UI coordination
-public/styles.css/rpg.css Cream/green interface, code-drawn tile world, responsive controls
+public/*.css              Cream/green interface, tile world, festival, responsive controls
 test/*.test.js            Deterministic, HTTP, legacy-removal, provider, and DOM checks
 ```
 
@@ -118,8 +137,8 @@ API bodies are capped at 16 KB and requests at 100 per IP per minute. Static pat
 
 ## Validation and handoff
 
-Automated tests cover all affordable main-story branches, integer-cent conservation, reflections, restoration/rewind, activity outcomes, world dimensions, collisions, reachable destinations, side-quest totals, unique rewards, locked equipment, character restore, retired endpoints, legacy receipt removal, request limits, provider failures, character creation, keyboard/touch events, full NPC quest completion, Learn return, Journal replay, and stored-progress compatibility.
+Automated tests cover all affordable main-story branches, integer-cent conservation, reflections, restoration/rewind, activity outcomes, world dimensions, collisions, reachable destinations, side-quest totals, unique rewards, locked equipment, character restore, retired endpoints, legacy receipt removal, request limits, provider failures, character creation, keyboard/touch events, full NPC quest completion, Learn return, Journal replay, and stored-progress compatibility. Festival checks cover all eight workshop combinations, several valid exact-change combinations, both delivery routes, bridge-pass reuse, collision, invalid solution rejection, reachable postcards, fox unlock, all three world-light transitions, unchanged story funds, modal cancellation, reward uniqueness, and restoration after refresh.
 
 No connected browser was available. jsdom cannot verify rendered art, phone overflow, real keyboard timing, screen-reader interaction, or animation quality. These are outstanding manual checks, not claimed completed. No volunteer research or demographic effectiveness is fabricated. See [the usability script](USABILITY.md).
 
-The pre-RPG experience is preserved at tag `archive/harbor-before-rpg-2026-10-17` (commit `ea69b92`). The earlier baseline remains at `archive/harbor-before-adventure-2026-10-17`. This change is delivered through the existing GitHub repository, without a separate hosting deployment.
+The pre-festival RPG is preserved at `archive/harbor-before-lanternwake-2026-10-17` (commit `995a7b7`). The pre-RPG experience remains at `archive/harbor-before-rpg-2026-10-17` (commit `ea69b92`), with the original baseline at `archive/harbor-before-adventure-2026-10-17`. This change is delivered through the existing GitHub repository, without a separate hosting deployment.

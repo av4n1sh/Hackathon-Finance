@@ -181,28 +181,37 @@
           .map((q) => q.id),
       ]),
     ].filter((id) => W.sideQuests.some((q) => q.id === id));
+    const festival = saved.festival || { solutions: {}, postcards: [] };
+    const festivalDone = ["workshop", "cash", "route"].filter(
+      (id) => festival.solutions?.[id],
+    );
     const xp =
       chapters.size * 20 +
       new Set(saved.mastered || []).size * 25 +
       new Set(saved.missionStamps || []).size * 30 +
       sides.length * 40 +
-      new Set(state.talked).size * 5;
-    const level = Math.min(5, 1 + Math.floor(xp / 100));
+      new Set(state.talked).size * 5 +
+      festivalDone.length * 30 +
+      new Set(festival.postcards || []).size * 5;
+    const level = Math.min(6, 1 + Math.floor(xp / 100));
     const inventory = W.items.filter(
       (i) =>
-        (i.chapter === undefined && !i.side) ||
+        (i.chapter === undefined && !i.side && !i.festival) ||
         chapters.has(i.chapter) ||
-        sides.includes(i.side),
+        sides.includes(i.side) ||
+        (i.festival && festivalDone.length === 3),
     );
     return {
       xp,
       level,
-      levelXP: level === 5 ? 100 : xp % 100,
-      next: level === 5 ? 0 : 100 - (xp % 100),
+      levelXP: level === 6 ? 100 : xp % 100,
+      next: level === 6 ? 0 : 100 - (xp % 100),
       chapters: [...chapters],
       sides,
       inventory,
-      equipped: inventory.find((i) => i.id === state.equipped) || W.items[0],
+      equipped:
+        inventory.find((i) => i.id === state.equipped) ||
+        W.items.find((i) => i.id === "notebook"),
     };
   }
   function equip(saved, id) {

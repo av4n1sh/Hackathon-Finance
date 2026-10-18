@@ -43,7 +43,9 @@ function fixture({ seed, blocked = false, fetcher } = {}) {
     "play.js",
     "world.js",
     "rpg.js",
+    "festival.js",
     "rpg-view.js",
+    "festival-view.js",
     "learn-view.js",
     "app.js",
   ])
@@ -293,4 +295,115 @@ test("blocked storage permits play and late AI cannot replace the world", async 
   assert.ok(other.w.document.querySelector("#harbor-world"));
   assert.deepEqual(f.errors, []);
   assert.deepEqual(other.errors, []);
+});
+
+test("quick-start festival completes all three challenges, lights the world, and persists unique rewards", async (t) => {
+  const f = fixture();
+  t.after(() => f.dom.window.close());
+  f.click("[data-action=quick-start]");
+  await tick();
+  assert.ok(f.w.document.querySelector(".festival-tracker"));
+  assert.equal(f.data().started, true);
+  const walletBefore = f.w.HarborGame.snapshot(f.data().game).available;
+  f.click("[data-open-festival=workshop]");
+  assert.ok(f.w.document.querySelector("#festival-dialog[open]"));
+  for (const part of ["lens:new", "mount:fitted", "delivery:delivered"])
+    f.click(`[data-festival-action=part][data-value="${part}"]`);
+  f.click("[data-festival-action=submit-workshop]");
+  assert.match(
+    f.w.document.querySelector("#challenge-feedback").textContent,
+    /above the \$20/,
+  );
+  assert.equal(f.data().festival.solutions.workshop, undefined);
+  for (const part of ["lens:reclaimed", "mount:salvaged"])
+    f.click(`[data-festival-action=part][data-value="${part}"]`);
+  f.click("[data-festival-action=submit-workshop]");
+  f.click("[data-action=close-festival]");
+  assert.ok(f.w.document.querySelector(".festival-phase-1"));
+  assert.equal(
+    f.w.document.querySelectorAll(".festival-spot.is-lit").length,
+    1,
+  );
+  f.click("[data-open-festival=cash]");
+  for (const coin of [500, 200, 100])
+    f.click(`[data-festival-action=coin][data-value="${coin}"]`);
+  f.click("[data-festival-action=submit-cash]");
+  f.click("[data-action=close-festival]");
+  f.click("[data-open-festival=route]");
+  const position = { x: f.data().rpg.x, y: f.data().rpg.y };
+  for (const key of [
+    "ArrowUp",
+    "ArrowRight",
+    "ArrowRight",
+    "ArrowRight",
+    "ArrowRight",
+    "ArrowDown",
+  ])
+    f.w.document
+      .querySelector(".delivery-board")
+      .dispatchEvent(
+        new f.w.KeyboardEvent("keydown", {
+          key,
+          bubbles: true,
+          cancelable: true,
+        }),
+      );
+  assert.deepEqual({ x: f.data().rpg.x, y: f.data().rpg.y }, position);
+  assert.ok(f.data().festival.solutions.route);
+  f.click("[data-action=close-festival]");
+  assert.ok(f.w.document.querySelector(".festival-phase-3"));
+  assert.equal(
+    f.w.document.querySelectorAll(".festival-spot.is-lit").length,
+    3,
+  );
+  assert.equal(f.w.HarborGame.snapshot(f.data().game).available, walletBefore);
+  assert.equal(f.w.HarborRPG.progress(f.data()).xp, 90);
+  await f.go("#journal");
+  assert.match(
+    f.w.document.querySelector(".festival-journal").textContent,
+    /3 of 3 lanterns lit/,
+  );
+  assert.ok(f.w.document.querySelector("[data-equip=festival-pin]"));
+  const second = fixture({
+    seed: f.w.localStorage.getItem("harbor-adventure-v1"),
+  });
+  t.after(() => second.dom.window.close());
+  assert.ok(second.w.document.querySelector(".festival-phase-3"));
+  second.click("[data-open-festival=cash]");
+  second.click("[data-festival-action=submit-cash]");
+  assert.equal(second.w.HarborRPG.progress(second.data()).xp, 90);
+  second.w.document
+    .querySelector("#festival-dialog")
+    .dispatchEvent(new second.w.Event("cancel", { cancelable: true }));
+  assert.equal(second.data().activeFestival, null);
+  assert.deepEqual(f.errors, []);
+  assert.deepEqual(second.errors, []);
+});
+
+test("postcard exploration unlocks the fox and companion positions follow walking", async (t) => {
+  const f = fixture();
+  t.after(() => f.dom.window.close());
+  await f.start();
+  for (const id of ["welcome", "grove", "market"])
+    f.click(`[data-postcard=${id}]`);
+  assert.equal(f.data().festival.postcards.length, 3);
+  assert.equal(f.w.document.querySelectorAll(".hidden-postcard").length, 2);
+  assert.equal(
+    f.w.document.querySelector("[data-companion=fox]").disabled,
+    false,
+  );
+  f.click("[data-companion=fox]");
+  assert.ok(f.w.document.querySelector(".travel-companion.fox"));
+  f.click("[data-move=left]");
+  assert.equal(
+    f.w.document.querySelector("#travel-companion").style.left,
+    f.w.document.querySelector("#world-player").style.left,
+  );
+  assert.equal(f.w.HarborRPG.progress(f.data()).xp, 15);
+  await f.go("#journal");
+  assert.match(
+    f.w.document.querySelector(".postcard-album").textContent,
+    /A pocket-sized adventure/,
+  );
+  assert.deepEqual(f.errors, []);
 });

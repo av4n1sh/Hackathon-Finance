@@ -1,0 +1,1206 @@
+/* A festival you can bring to life, one hands-on decision at a time. */
+.rpg-layout {
+  grid-template-columns: minmax(0, 1.9fr) minmax(330px, 0.9fr);
+}
+.rpg-page-head h1 {
+  font-size: clamp(1.8rem, 3vw, 2.5rem);
+}
+.lanternwake-map .tile-grid {
+  filter: saturate(0.85) brightness(0.91);
+}
+.festival-phase-3 .tile-grid {
+  filter: saturate(1.12) brightness(1.04);
+}
+.world-topline {
+  background: #234c43;
+}
+.world-frame {
+  box-shadow:
+    0 6px 0 #b6c0a1,
+    0 15px 35px #23483310;
+}
+.festival-props {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 13;
+}
+.festival-props button {
+  pointer-events: auto;
+}
+.festival-spot {
+  position: absolute;
+  width: 6.25%;
+  height: 9.09%;
+  padding: 0;
+  min-height: 0;
+  background: transparent;
+  border-radius: 0;
+  overflow: visible;
+}
+.lantern-art {
+  display: block;
+  width: 42%;
+  height: 65%;
+  position: relative;
+  border: 3px solid #b88c49;
+  border-radius: 7px;
+  background: #665f44;
+  box-shadow: 0 3px 0 #3b4835;
+  transform: rotate(-6deg);
+}
+.lantern-art:before {
+  content: "";
+  position: absolute;
+  left: 15%;
+  right: 15%;
+  height: 35%;
+  top: -45%;
+  border: 2px solid #a67b41;
+  border-bottom: 0;
+  border-radius: 8px 8px 0 0;
+}
+.lantern-art:after {
+  content: "";
+  position: absolute;
+  width: 130%;
+  height: 3px;
+  bottom: -4px;
+  left: -15%;
+  background: #b88c49;
+}
+.lantern-art i {
+  position: absolute;
+  inset: 15%;
+  background: #96936d;
+  border-radius: 50%;
+}
+.is-lit .lantern-art {
+  background: #ffe8a2;
+  box-shadow:
+    0 0 15px #f7d176,
+    0 0 30px #f5da7988;
+}
+.is-lit .lantern-art i {
+  background: #ffcc59;
+  box-shadow: 0 0 8px #fff2b5;
+}
+.festival-spot:hover .lantern-art {
+  transform: rotate(4deg) translateY(-3px);
+}
+.spot-label {
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: clamp(7px, 0.75vw, 10px);
+  line-height: 1.4;
+  background: #394e32eb;
+  border: 1px solid #adbc85;
+  color: #fff3cb;
+  padding: 1px 5px;
+  border-radius: 4px;
+  white-space: nowrap;
+  z-index: 2;
+}
+.hidden-postcard {
+  position: absolute;
+  width: 5%;
+  height: 7%;
+  padding: 0;
+  min-height: 0;
+  border: 1px solid #a0803f;
+  background: #f7e4af;
+  color: #6c542c;
+  border-radius: 4px;
+  box-shadow: 2px 3px 0 #29472f44;
+  font-size: clamp(12px, 1.8vw, 22px);
+  transform: rotate(-10deg);
+  transition: transform 0.15s;
+}
+.hidden-postcard:after {
+  content: "✧";
+  position: absolute;
+  right: -8px;
+  top: -12px;
+  color: #f6e8aa;
+  font-size: 16px;
+  text-shadow: 0 1px #3d6038;
+}
+.hidden-postcard:hover {
+  transform: rotate(4deg) translateY(-4px);
+}
+.festival-bunting {
+  position: absolute;
+  left: 21%;
+  top: 43%;
+  right: 15%;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  border-top: 2px solid #5a6748;
+  transform: rotate(-3deg);
+  height: 12%;
+  pointer-events: none;
+}
+.festival-bunting i {
+  width: 7%;
+  height: 45%;
+  clip-path: polygon(0 0, 100% 0, 50% 100%);
+  background: #b59b6e;
+}
+.festival-phase-1 .flag-0,
+.festival-phase-2 .flag-0,
+.festival-phase-3 .flag-0 {
+  background: #d89663;
+}
+.festival-phase-2 .flag-1,
+.festival-phase-3 .flag-1 {
+  background: #e6c576;
+}
+.festival-phase-3 .flag-2 {
+  background: #b2c394;
+}
+.cottage-glow,
+.market-glow,
+.pier-glow {
+  position: absolute;
+  width: 18%;
+  height: 23%;
+  background: radial-gradient(ellipse, #ffda7b66, transparent 70%);
+  mix-blend-mode: screen;
+  pointer-events: none;
+}
+.cottage-glow {
+  left: 24%;
+  top: 0;
+}
+.market-glow {
+  left: 43%;
+  top: 46%;
+}
+.pier-glow {
+  left: 44%;
+  top: 72%;
+  width: 30%;
+}
+.travel-companion {
+  position: absolute;
+  width: 4.5%;
+  height: 6%;
+  transform: translate(-60%, 75%);
+  filter: drop-shadow(1px 2px #203e2c55);
+  pointer-events: none;
+  transition:
+    left 0.13s linear,
+    top 0.13s linear;
+}
+.travel-companion svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+.travel-companion.fox {
+  width: 5.3%;
+  height: 7%;
+}
+.town-memory {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  background: #e9e6d0;
+  padding: 10px 16px;
+  border-top: 1px solid #bcc6a2;
+  font-size: 0.72rem;
+  color: #4a5e40;
+}
+.town-memory span {
+  border-left: 2px solid #94a576;
+  padding-left: 8px;
+}
+.quest-ready .quest-mark {
+  animation: none;
+}
+.story-track {
+  margin: 20px 0;
+}
+.story-track > summary {
+  padding: 14px 4px;
+  cursor: pointer;
+  min-height: 48px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #50633f;
+}
+.story-track .quest-tracker {
+  margin: 10px 0 0;
+}
+.festival-tracker {
+  background: #fbf2d9;
+  border: 1px solid #c8b581;
+  border-radius: 14px;
+  padding: 23px;
+  box-shadow: 0 4px 0 #e3dcc1;
+}
+.festival-kicker {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  color: #79602c;
+  font-size: 0.8rem;
+  font-weight: 650;
+  margin-bottom: 14px;
+}
+.festival-kicker > span:last-child {
+  background: #f2e2af;
+  border: 1px solid #d6bd79;
+  border-radius: 20px;
+  padding: 3px 9px;
+  white-space: nowrap;
+}
+.festival-tracker h2 {
+  font:
+    normal 1.85rem/1.1 Georgia,
+    serif;
+  margin-bottom: 14px;
+  color: #28523b;
+}
+.festival-tracker > p {
+  font-size: 0.94rem;
+  line-height: 1.6;
+}
+.festival-objectives {
+  display: grid;
+  gap: 10px;
+}
+.festival-objectives button {
+  min-height: 76px;
+  text-align: left;
+  background: #fffaf0;
+  color: #294a35;
+  border: 1px solid #cabf98;
+  padding: 12px 14px;
+  gap: 12px;
+  justify-content: flex-start;
+}
+.festival-objectives button > span:first-child {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 38px;
+  background: #efe1b8;
+  border-radius: 8px;
+  color: #775c29;
+  flex-shrink: 0;
+  font-size: 1.3rem;
+}
+.festival-objectives button > span:nth-child(2) {
+  flex: 1;
+}
+.festival-objectives strong,
+.festival-objectives small {
+  display: block;
+}
+.festival-objectives strong {
+  font-size: 0.93rem;
+}
+.festival-objectives small {
+  font-size: 0.75rem;
+  font-weight: 400;
+  margin-top: 5px;
+  color: #596548;
+}
+.festival-objectives .objective-done {
+  background: #e7ecd8;
+  border-color: #a9b38d;
+}
+.objective-done > span:first-child {
+  background: #24563f !important;
+  color: #fff4d5 !important;
+}
+.postcard-progress {
+  font-size: 0.8rem;
+  border-top: 1px dashed #cbbd8c;
+  display: grid;
+  gap: 5px;
+  margin-top: 20px;
+  padding-top: 16px;
+  color: #625936;
+}
+.postcard-progress > span:first-child {
+  font-weight: 650;
+  font-size: 0.9rem;
+}
+.companion-settings {
+  margin-top: 10px;
+}
+.companion-settings summary {
+  font-size: 0.8rem;
+  padding: 12px 0;
+  cursor: pointer;
+  min-height: 44px;
+}
+.companion-settings .actions {
+  gap: 8px;
+}
+.companion-settings button {
+  font-size: 0.75rem;
+  padding: 10px 12px;
+  min-height: 44px;
+}
+.companion-settings button[aria-pressed="true"] {
+  background: var(--forest);
+  color: var(--paper);
+}
+.title-customize {
+  display: block;
+  margin: 10px 0 0;
+}
+.title-world .festival-props {
+  opacity: 0.9;
+}
+.title-parchment {
+  max-width: 590px;
+}
+.title-parchment:before {
+  content: "✦";
+  font-size: 25px;
+  color: #967132;
+  position: absolute;
+  right: 28px;
+  top: 23px;
+}
+.festival-dialog {
+  position: fixed;
+  inset: 0;
+  margin: auto;
+  width: min(980px, calc(100% - 36px));
+  max-height: calc(100dvh - 40px);
+  padding: 0;
+  border: 2px solid #7b8e63;
+  border-radius: 18px;
+  background: #faf5e6;
+  color: var(--ink);
+  box-shadow: 0 20px 100px #142d2a66;
+  overflow: auto;
+}
+.festival-dialog::backdrop {
+  background: #153d34bd;
+  backdrop-filter: blur(3px);
+}
+.challenge-head {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 24px 28px;
+  background: #e8ead5;
+  border-bottom: 1px solid #bccba5;
+}
+.challenge-head .eyebrow {
+  font-size: 0.8rem;
+  margin-bottom: 9px;
+}
+.challenge-head h2 {
+  font-size: 1.65rem;
+  margin: 0;
+  max-width: 700px;
+}
+.challenge-head > button {
+  padding: 0;
+  min-height: 44px;
+  min-width: 44px;
+  font-size: 1.8rem;
+  flex-shrink: 0;
+}
+.challenge-body {
+  padding: 25px 28px;
+}
+.challenge-body > p {
+  max-width: 790px;
+}
+.workshop-grid {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 28px;
+  margin: 25px 0;
+}
+.part-group {
+  margin: 0 0 22px;
+  padding: 0;
+  border: 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.part-group legend {
+  font-size: 1rem;
+  font-weight: 650;
+  margin-bottom: 12px;
+}
+.part-group button {
+  position: relative;
+  display: block;
+  text-align: left;
+  background: #fffaf0;
+  color: #294a35;
+  border: 1px solid #afba98;
+  padding: 15px 14px;
+  font-weight: 400;
+}
+.part-group strong {
+  font-size: 0.9rem;
+  display: block;
+  margin-bottom: 7px;
+}
+.part-group span {
+  font-size: 0.8rem;
+  line-height: 1.5;
+  display: block;
+}
+.part-group button[aria-pressed="true"] {
+  background: #dee8cf;
+  border: 2px solid #46653d;
+  padding: 14px 13px;
+}
+.part-group button[aria-pressed="true"]:after {
+  content: "✓";
+  position: absolute;
+  right: 7px;
+  top: 3px;
+  font-size: 12px;
+  color: #385c32;
+}
+.build-preview {
+  background: #f0ecd7;
+  border: 1px solid #d4c59c;
+  border-radius: 14px;
+  padding: 24px;
+  align-self: start;
+}
+.crafted-lantern {
+  width: 90px;
+  height: 140px;
+  position: relative;
+  margin: 14px auto 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+}
+.craft-handle {
+  border: 5px solid #997c49;
+  border-bottom: 0;
+  border-radius: 20px 20px 0 0;
+  width: 42px;
+  height: 35px;
+}
+.craft-frame {
+  width: 77px;
+  height: 90px;
+  border: 7px solid #a68b56;
+  border-radius: 12px;
+  background: #a5ad8a;
+  position: relative;
+  display: grid;
+  place-items: center;
+  box-shadow: inset 0 0 0 3px #6e7d5d;
+}
+.craft-frame i {
+  height: 48px;
+  width: 28px;
+  background: #c2be94;
+  border-radius: 50%;
+}
+.craft-base {
+  height: 10px;
+  width: 90px;
+  background: #997c49;
+  border-radius: 4px;
+}
+.assembled .craft-frame {
+  background: #ffeab5;
+  box-shadow:
+    0 0 35px #f1cd7866,
+    inset 0 0 0 3px #eac477;
+}
+.assembled .craft-frame i {
+  background: #f5c261;
+  box-shadow: 0 0 17px #ffdf86;
+}
+.build-preview h3 {
+  font-size: 1.1rem;
+  margin-bottom: 18px;
+}
+.build-line {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  font-size: 0.85rem;
+  padding: 8px 0;
+  border-bottom: 1px solid #d7d1b7;
+}
+.build-total {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+  padding: 17px 0;
+  border-top: 2px solid #bdc49f;
+  margin-top: 13px;
+}
+.build-total strong {
+  font-size: 1.35rem;
+  letter-spacing: -0.03em;
+}
+.over-budget {
+  color: #8e421e;
+}
+.build-preview > button {
+  width: 100%;
+  font-size: 0.9rem;
+}
+.festival-success {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  padding: 20px;
+  border: 1px solid #b0bd83;
+  border-radius: 13px;
+  background: #e9eecf;
+  margin: 0 0 25px;
+}
+.festival-success > span {
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: #ecd68b;
+  color: #795820;
+  font-size: 2rem;
+  flex-shrink: 0;
+  animation: lantern-reward 0.4s ease-out;
+}
+.festival-success strong {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 1.1rem;
+}
+.festival-success p {
+  font-size: 0.9rem;
+  margin: 8px 0;
+}
+.challenge-feedback {
+  margin: 0;
+}
+.challenge-feedback.has-feedback {
+  padding: 15px;
+  background: #f7e7c3;
+  border-left: 3px solid #95632d;
+  margin: 18px 0;
+}
+.challenge-funds {
+  font-size: 0.8rem;
+  color: #646a50;
+  border-top: 1px solid #d6d7bc;
+  margin: 24px 0 0;
+  padding-top: 16px;
+}
+.ticket-counter {
+  background: #f0ead3;
+  border: 1px solid #cabd90;
+  border-radius: 14px;
+  padding: 25px;
+  margin: 25px 0;
+}
+.festival-tickets {
+  display: flex;
+  gap: 14px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 5px 0 25px;
+}
+.festival-ticket {
+  background: #fbefbc;
+  color: #6d5524;
+  border: 2px dashed #c3a664;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-width: 125px;
+  padding: 14px 18px;
+  border-radius: 5px;
+  transform: rotate(-3deg);
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.festival-ticket:nth-child(2) {
+  transform: rotate(4deg);
+}
+.festival-ticket strong {
+  font-size: 1.9rem;
+  line-height: 1.4;
+}
+.festival-ticket small {
+  font-size: 0.7rem;
+  font-weight: 400;
+}
+.counter-math {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 14px 0;
+  border-top: 1px solid #cbbf9b;
+  border-bottom: 1px solid #cbbf9b;
+  font-size: 0.9rem;
+}
+.counter-math strong {
+  margin-left: 12px;
+}
+.ticket-counter h3 {
+  font-size: 1.1rem;
+  margin: 25px 0 16px;
+}
+.cash-drawer {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+}
+.cash-drawer button {
+  background: #d6e3be;
+  color: #385532;
+  border: 2px solid #86a273;
+  border-radius: 5px;
+  display: block;
+  box-shadow: inset 0 0 0 4px #c2d4a7;
+  text-align: center;
+  padding: 18px 15px;
+}
+.cash-drawer span {
+  display: block;
+  font-size: 2rem;
+  line-height: 1.2;
+}
+.cash-drawer small {
+  display: block;
+  font-size: 0.75rem;
+  margin-top: 9px;
+  font-weight: 400;
+}
+.change-tray {
+  min-height: 95px;
+  border: 2px dashed #abb997;
+  border-radius: 10px;
+  margin: 20px 0 0;
+  padding: 18px;
+  display: flex;
+  gap: 9px;
+  flex-wrap: wrap;
+  align-items: center;
+  background: #e3e5cc;
+}
+.change-tray p {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #5c6950;
+}
+.tray-note {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 50px;
+  min-height: 35px;
+  background: #e5edcf;
+  border: 1px solid #8fa77c;
+  color: #355530;
+  border-radius: 3px;
+  box-shadow: 2px 2px #6b885133;
+  font-weight: 650;
+}
+.delivery-layout {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 25px;
+  margin: 27px 0;
+  align-items: start;
+}
+.delivery-board {
+  position: relative;
+  aspect-ratio: 5/4;
+  border: 4px solid #6e8454;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #8da66c;
+}
+.delivery-grid {
+  display: grid;
+  position: absolute;
+  inset: 0;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-rows: repeat(4, minmax(0, 1fr));
+}
+.delivery-tile {
+  display: grid;
+  place-items: center;
+  border: 1px solid #9aa879;
+  text-align: center;
+  background: #c5c994;
+  color: #4a5d3a;
+  font-size: 1rem;
+}
+.delivery-tile:nth-child(2n) {
+  background-color: #bdc38e;
+}
+.delivery-tile.closed {
+  background: repeating-linear-gradient(45deg, #8b9870 0 7px, #7e8b64 8px 14px);
+  color: #e5e7ce;
+  font-size: 2rem;
+}
+.delivery-tile.toll {
+  background: #ceaf7d;
+  border-color: #a98a58;
+  color: #594521;
+  font-weight: 650;
+}
+.delivery-tile.stage {
+  background: #edcf83;
+  border: 2px solid #a2803c;
+  color: #6b501c;
+  font-size: 2rem;
+}
+.delivery-tile small {
+  display: block;
+  font-size: 0.65rem;
+  line-height: 1.2;
+}
+.delivery-player {
+  position: absolute;
+  width: 20%;
+  height: 25%;
+  display: grid;
+  place-items: center;
+  font-size: 2.7rem;
+  color: #304c35;
+  text-shadow: 2px 3px #f6ebbc;
+  pointer-events: none;
+  transition:
+    left 0.15s linear,
+    top 0.15s linear;
+}
+.delivery-layout aside > h3 {
+  font-size: 1.25rem;
+}
+.delivery-layout aside > p {
+  font-size: 0.9rem;
+}
+.delivery-stats {
+  margin: 20px 0;
+}
+.delivery-stats div {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 0.85rem;
+  padding: 8px 0;
+  border-bottom: 1px solid #d8d5bb;
+}
+.delivery-stats dd {
+  margin: 0;
+  font-weight: 650;
+}
+.delivery-pad {
+  margin: 20px 0 4px;
+}
+.festival-journal {
+  padding: 28px 0;
+  margin: 10px 0 35px;
+  border-bottom: 1px solid #cdd4b9;
+}
+.festival-journal h2 {
+  font-size: 1.8rem;
+}
+.festival-journal-cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+.festival-journal-cards article {
+  background: #f4ecd2;
+  padding: 23px;
+  border: 1px solid #cabd92;
+  border-radius: 12px;
+}
+.festival-journal-cards h3 {
+  font-size: 1.1rem;
+  margin: 15px 0 12px;
+}
+.festival-journal-cards p {
+  font-size: 0.9rem;
+  min-height: 58px;
+}
+.festival-journal-cards button {
+  font-size: 0.85rem;
+  width: 100%;
+}
+.journal-lantern {
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  font-size: 1.7rem;
+  background: #d6d9be;
+  color: #6a7553;
+  border-radius: 50%;
+}
+.journal-lantern.is-lit {
+  background: #f3db8d;
+  color: #8b6121;
+  box-shadow: 0 0 20px #e8cc7977;
+}
+.postcard-album {
+  margin-top: 25px;
+}
+.postcard-album summary {
+  padding: 12px 0;
+  min-height: 48px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.postcard-album > div {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 15px 0;
+}
+.postcard-album article {
+  border: 1px solid #c7cdb1;
+  background: #f4f2df;
+  padding: 20px;
+  border-radius: 10px;
+}
+.postcard-album h3 {
+  font-size: 1rem;
+  margin-bottom: 10px;
+}
+.postcard-album p {
+  font-size: 0.85rem;
+  margin: 0;
+}
+.discovery-pop {
+  position: fixed;
+  z-index: 18;
+  bottom: 20px;
+  left: 20px;
+  max-width: 360px;
+  width: calc(100% - 40px);
+  background: #fcf2d4;
+  border: 2px solid #b7a16c;
+  padding: 22px;
+  border-radius: 14px;
+  box-shadow: 0 8px 40px #173d3b33;
+  animation: lantern-reward 0.3s ease-out;
+}
+.discovery-pop > span {
+  font-size: 0.75rem;
+  color: #796132;
+  font-weight: 650;
+}
+.discovery-pop h3 {
+  font-size: 1.2rem;
+  margin: 12px 0;
+}
+.discovery-pop p {
+  font-size: 0.9rem;
+  margin-bottom: 12px;
+}
+.discovery-pop > strong {
+  font-size: 0.85rem;
+  display: block;
+  margin: 14px 0;
+}
+.discovery-pop button {
+  font-size: 0.9rem;
+}
+@keyframes lantern-reward {
+  from {
+    opacity: 0.2;
+    translate: 0 10px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+@media (max-width: 1100px) {
+  .rpg-layout {
+    grid-template-columns: minmax(0, 1.4fr) minmax(310px, 1fr);
+  }
+  .festival-tracker {
+    padding: 20px;
+  }
+  .festival-tracker h2 {
+    font-size: 1.7rem;
+  }
+  .festival-objectives button {
+    padding: 12px 10px;
+    gap: 9px;
+  }
+  .workshop-grid {
+    gap: 20px;
+  }
+  .part-group button {
+    padding: 14px 12px;
+  }
+  .part-group button[aria-pressed="true"] {
+    padding: 13px 11px;
+  }
+}
+@media (max-width: 850px) {
+  .rpg-layout {
+    grid-template-columns: 1fr;
+  }
+  .rpg-sidebar {
+    display: block;
+  }
+  .festival-tracker {
+    margin-bottom: 20px;
+  }
+  .festival-objectives {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+  .festival-objectives button {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
+  .festival-objectives button > span:last-child {
+    display: none;
+  }
+  .festival-objectives small {
+    font-size: 0.75rem;
+  }
+  .postcard-progress {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+  }
+  .workshop-grid {
+    grid-template-columns: 1fr;
+  }
+  .build-preview {
+    display: grid;
+    grid-template-columns: 120px 1fr;
+    gap: 0 20px;
+  }
+  .crafted-lantern {
+    grid-row: 1/8;
+    grid-column: 1;
+    align-self: center;
+  }
+  .build-preview > h3,
+  .build-preview > .build-line,
+  .build-preview > .build-total,
+  .build-preview > p,
+  .build-preview > button {
+    grid-column: 2;
+  }
+  .festival-journal-cards {
+    gap: 12px;
+  }
+  .festival-journal-cards article {
+    padding: 20px 16px;
+  }
+}
+@media (max-width: 580px) {
+  .festival-objectives {
+    grid-template-columns: 1fr;
+  }
+  .festival-objectives button {
+    flex-direction: row;
+    align-items: center;
+  }
+  .festival-objectives button > span:last-child {
+    display: block;
+  }
+  .festival-objectives small {
+    font-size: 0.78rem;
+  }
+  .postcard-progress {
+    display: grid;
+    gap: 7px;
+  }
+  .festival-dialog {
+    width: calc(100% - 18px);
+    max-height: calc(100dvh - 20px);
+    border-radius: 12px;
+  }
+  .challenge-head {
+    padding: 18px 16px;
+    gap: 14px;
+  }
+  .challenge-head h2 {
+    font-size: 1.3rem;
+  }
+  .challenge-head .eyebrow {
+    font-size: 0.72rem;
+  }
+  .challenge-body {
+    padding: 20px 16px;
+  }
+  .challenge-body > p {
+    font-size: 0.95rem;
+  }
+  .part-group {
+    grid-template-columns: 1fr;
+  }
+  .part-group button {
+    padding: 14px;
+  }
+  .part-group button[aria-pressed="true"] {
+    padding: 13px;
+  }
+  .build-preview {
+    display: block;
+    padding: 22px;
+  }
+  .crafted-lantern {
+    margin: 12px auto 20px;
+  }
+  .ticket-counter {
+    padding: 18px 14px;
+  }
+  .festival-tickets {
+    gap: 7px;
+  }
+  .festival-ticket {
+    min-width: 0;
+    flex: 1;
+    padding: 12px 6px;
+    font-size: 0.68rem;
+  }
+  .festival-ticket strong {
+    font-size: 1.5rem;
+  }
+  .counter-math {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .counter-math > span {
+    display: flex;
+    justify-content: space-between;
+  }
+  .cash-drawer {
+    gap: 9px;
+  }
+  .cash-drawer button {
+    padding: 14px 7px;
+  }
+  .cash-drawer span {
+    font-size: 1.7rem;
+  }
+  .cash-drawer small {
+    font-size: 0.65rem;
+  }
+  .change-tray {
+    padding: 12px;
+    gap: 6px;
+  }
+  .tray-note {
+    min-width: 40px;
+  }
+  .delivery-layout {
+    grid-template-columns: 1fr;
+  }
+  .delivery-player {
+    font-size: 2.2rem;
+  }
+  .delivery-layout aside {
+    padding: 0 4px;
+  }
+  .delivery-stats {
+    margin: 12px 0;
+  }
+  .delivery-pad {
+    margin: 15px auto;
+  }
+  .delivery-layout aside > .text-button {
+    display: block;
+    margin: auto;
+  }
+  .festival-success {
+    padding: 17px;
+    gap: 12px;
+  }
+  .festival-success > span {
+    width: 36px;
+    height: 36px;
+    font-size: 1.5rem;
+  }
+  .festival-success strong {
+    font-size: 0.96rem;
+  }
+  .festival-journal-cards,
+  .postcard-album > div {
+    grid-template-columns: 1fr;
+  }
+  .festival-journal-cards p {
+    min-height: 0;
+  }
+  .festival-journal h2 {
+    font-size: 1.5rem;
+  }
+  .festival-spot .spot-label {
+    font-size: 6px;
+    padding: 0 3px;
+  }
+  .hidden-postcard {
+    font-size: 12px;
+  }
+  .hidden-postcard:after {
+    font-size: 11px;
+    right: -5px;
+    top: -9px;
+  }
+  .lantern-art {
+    border-width: 2px;
+  }
+  .town-memory {
+    font-size: 0.68rem;
+    padding: 9px 12px;
+  }
+  .discovery-pop {
+    left: 12px;
+    bottom: 12px;
+    width: calc(100% - 24px);
+    padding: 18px;
+  }
+  .companion-settings button {
+    font-size: 0.75rem;
+  }
+  .title-customize {
+    font-size: 0.9rem;
+  }
+  .title-parchment:before {
+    font-size: 18px;
+    right: 18px;
+    top: 15px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .travel-companion,
+  .hidden-postcard,
+  .delivery-player {
+    transition: none;
+  }
+  .festival-success > span,
+  .discovery-pop {
+    animation: none;
+  }
+}

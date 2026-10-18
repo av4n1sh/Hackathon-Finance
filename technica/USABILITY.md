@@ -17,6 +17,15 @@ Allow 15–20 minutes. Explain: “We’re testing the game, not you. The money 
 11. On a phone, inspect map controls, conversations, long choices, inventory, and text at increased size. Look for clipped content and horizontal overflow. Try the named destination menu if a small map target is difficult.
 12. With a keyboard or the volunteer’s preferred assistive input, navigate the three tabs, talk, make a choice, and use the Journal. Check focus after a conversation, decision, retry, and return from Learn. With reduced motion enabled, verify that movement interpolation and ambient animation stop.
 
+For the Lanternwake opening, start with these tasks before the longer story:
+
+- Start the festival without completing a character form. Describe the three objectives and how to find them.
+- Build a lantern. Try an over-budget plan, then a workable one. Explain the repair charge and whether the fund feels separate from the main wallet. Describe what changed in the town after completion.
+- Run the ticket counter and make change with two different note combinations. Observe whether the cash drawer feels understandable and interactive. Ask if retry feedback helps without giving the sense of a penalty.
+- Deliver the lantern crate using a free route and a paid route. Describe their trade-off. Try the keyboard and direction buttons; confirm that the overworld character stays put while controlling the crate.
+- Find three postcards and choose the fox companion. Try dismissing a discovery notice and playing without a companion. Look for overlay obstruction and small map targets on a phone.
+- Restore all three lights, refresh, and find their record in the Journal. Repeat a challenge and check that XP does not duplicate. Ask which activities were engaging, which were repetitive, and what decisions felt meaningful; do not assume the new mechanics improve enjoyment or learning without volunteer evidence.
+
 Ask afterward: “What helped you understand a decision?”, “What felt like extra work?”, “Which situation or access need is missing?”, and “What wording should change?” Do not ask for personal account details or proof of circumstances.
 
 Record independent/assisted/not-completed tasks, observed hesitation, misunderstood language, access barriers, and concrete suggestions. Distinguish observation from interpretation. Do not infer demographic effectiveness from a small sample. Invite voluntary feedback through adult learning groups, accessibility groups, students, and people with varied payment and income arrangements; offer accessible formats without requiring demographic disclosure. Incorporate recurring barriers into reviewed, source-checked changes, then invite participants to verify the revisions. Publish only anonymous findings with permission and keep private research notes outside this repository.

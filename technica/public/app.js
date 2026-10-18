@@ -4,7 +4,9 @@
     G = window.HarborGame,
     W = window.HarborWorld,
     R = window.HarborRPG,
-    V = window.HarborRPGView;
+    V = window.HarborRPGView,
+    F = window.HarborFestival,
+    FV = window.HarborFestivalView;
   const main = document.querySelector("#main"),
     KEY = "harbor-adventure-v1";
   const esc = (value) =>
@@ -22,6 +24,8 @@
   const fresh = () => ({
     game: G.initial(),
     rpg: R.initial(),
+    festival: F.initial(),
+    activeFestival: null,
     started: false,
     learned: [],
     mastered: [],
@@ -33,7 +37,8 @@
   });
   let saved = fresh(),
     previousTab = "play",
-    rewardMessage = null;
+    rewardMessage = null,
+    discovery = null;
   function warn(message) {
     const el = document.querySelector("#storage-message");
     el.hidden = false;
@@ -52,6 +57,16 @@
   const filter = (values, test) => [
     ...new Set((Array.isArray(values) ? values : []).filter(test)),
   ];
+  function festivalSave(raw) {
+    try {
+      return F.restore(raw);
+    } catch {
+      warn(
+        "Your festival challenge could not be restored. Your main story, character, and earlier learning progress are still here.",
+      );
+      return F.initial();
+    }
+  }
   try {
     const raw = JSON.parse(localStorage.getItem(KEY) || "null");
     if (raw) {
@@ -59,6 +74,10 @@
         ...fresh(),
         game: G.restore(raw.game),
         rpg: character(raw.rpg),
+        festival: festivalSave(raw.festival),
+        activeFestival: F.spots.some((s) => s.id === raw.activeFestival)
+          ? raw.activeFestival
+          : null,
         started: raw.started === true,
         learned: filter(raw.learned, (id) =>
           C.lessons.some((l) => l.id === id),
@@ -167,11 +186,51 @@
             : saved.started
               ? V.world(saved, saved.talking)
               : V.title(saved);
-    if (rewardMessage)
+    if (tab === "play" && sub !== "setup") FV.attach(saved);
+    if (tab === "journal")
+      main
+        .querySelector(".character-hud")
+        .insertAdjacentHTML("afterend", FV.journal(saved));
+    if (tab === "play" && sub !== "setup" && !saved.started) {
+      const start = main.querySelector(".title-parchment .button");
+      start.outerHTML =
+        '<button class="button" data-action="quick-start">Start the festival →</button><a class="text-button title-customize" href="#play/setup">Customize your traveler</a>';
+      main.querySelector(".title-subtitle").textContent =
+        "Three lanterns. Three challenges. Your festival.";
+      main.querySelector(
+        ".title-parchment>p:not(.title-subtitle)",
+      ).textContent =
+        "Build a lantern, run a ticket stall, and explore a new delivery route. Bring Tidehaven to life one good decision at a time.";
+    }
+    if (rewardMessage && !discovery)
       main.insertAdjacentHTML(
         "beforeend",
         `<div class="reward-toast" role="status"><span class="reward-star" aria-hidden="true">✦</span><span>${esc(rewardMessage)}</span><button class="text-button" data-action="dismiss-reward" aria-label="Dismiss reward notification">Got it</button></div>`,
       );
+    if (discovery)
+      main.insertAdjacentHTML(
+        "beforeend",
+        `<aside class="discovery-pop" role="status"><span>✉ Postcard found · +5 XP once</span><h3>${esc(discovery.title)}</h3><p>${esc(discovery.note)}</p>${saved.festival.postcards.length === 3 ? "<strong>A little fox wants to travel with you. Choose it in your companion settings.</strong>" : ""}<button class="text-button" data-action="close-discovery">Keep exploring →</button></aside>`,
+      );
+    if (
+      tab === "play" &&
+      sub !== "setup" &&
+      saved.started &&
+      saved.activeFestival
+    ) {
+      main.insertAdjacentHTML(
+        "beforeend",
+        FV.dialog(saved, saved.activeFestival),
+      );
+      const dialog = document.querySelector("#festival-dialog");
+      dialog.querySelector(".delivery-board")?.setAttribute("tabindex", "0");
+      if (typeof dialog.showModal === "function") dialog.showModal();
+      else dialog.setAttribute("open", "");
+      dialog.addEventListener("cancel", (event) => {
+        event.preventDefault();
+        closeFestival();
+      });
+    }
     if (animate) {
       void main.offsetWidth;
       main.classList.add(
@@ -206,6 +265,55 @@
     document.querySelector("#nearby-actions").innerHTML = V.nearby(saved);
     document.querySelector(".npc-dialog")?.remove();
     document.querySelector(".reward-toast")?.remove();
+    FV.sync(saved);
+  }
+  function collectAtPlayer() {
+    const before = saved.festival;
+    const next = F.collectAt(before, saved.rpg);
+    if (next !== before) {
+      const id = next.postcards.find((id) => !before.postcards.includes(id));
+      discovery = F.postcards.find((c) => c.id === id);
+      saved.festival = next;
+      return true;
+    }
+    return false;
+  }
+  function openFestival(id) {
+    const spot = F.spots.find((s) => s.id === id);
+    if (!spot) return;
+    saved.started = true;
+    saved.rpg = F.travel(saved.rpg, spot);
+    saved.activeFestival = id;
+    saved.talking = null;
+    discovery = null;
+    save();
+    if (!location.hash.startsWith("#play"))
+      history.pushState(null, "", "#play/world");
+    render(false, false);
+  }
+  function closeFestival() {
+    saved.activeFestival = null;
+    rewardMessage = null;
+    save();
+    render(false, false);
+    focusWorld();
+  }
+  function festivalAction(action, value, selector) {
+    rewardMessage = null;
+    try {
+      saved.festival = F.act(saved.festival, action, value);
+      save();
+      render(false, false);
+      if (selector)
+        main.querySelector(selector)?.focus({ preventScroll: true });
+    } catch (error) {
+      const feedback = document.querySelector("#challenge-feedback");
+      if (feedback) {
+        feedback.textContent = error.message;
+        feedback.classList.add("has-feedback");
+      }
+      announce(error.message);
+    }
   }
   function walk(dx, dy) {
     rewardMessage = null;
@@ -216,8 +324,12 @@
     }
     saved.rpg = moved;
     saved.talking = null;
+    const found = collectAtPlayer();
     save();
-    updateWorld();
+    if (found) {
+      render(false, false);
+      focusWorld();
+    } else updateWorld();
     announce(
       R.nearby(saved.rpg)
         .map((n) => `${n.name} is nearby. Press E to talk.`)
@@ -254,6 +366,21 @@
     announce(`Arrived at ${W.npcs.find((n) => n.id === id).place}.`);
   }
   document.addEventListener("keydown", (event) => {
+    if (document.querySelector("#festival-dialog[open]")) {
+      if (event.target.closest(".delivery-board,.delivery-pad")) {
+        const direction = {
+          ArrowUp: "up",
+          ArrowDown: "down",
+          ArrowLeft: "left",
+          ArrowRight: "right",
+        }[event.key];
+        if (direction) {
+          event.preventDefault();
+          festivalAction("route", direction, ".delivery-board");
+        }
+      }
+      return;
+    }
     if (!event.target.closest("#harbor-world,.dpad") || !saved.started) return;
     const directions = {
       ArrowUp: [0, -1],
@@ -273,7 +400,13 @@
       event.preventDefault();
       const npc = R.nearby(saved.rpg)[0];
       if (npc) talk(npc.id);
-      else announce("Walk beside a character to start a conversation.");
+      else {
+        const spot = F.spots.find(
+          (s) => Math.abs(s.x - saved.rpg.x) + Math.abs(s.y - saved.rpg.y) <= 1,
+        );
+        if (spot) openFestival(spot.id);
+        else announce("Walk beside a character or lantern marker to interact.");
+      }
     }
   });
   document.addEventListener("click", async (event) => {
@@ -287,8 +420,10 @@
         if (end) {
           saved.rpg = { ...saved.rpg, ...end };
           saved.talking = null;
+          const found = collectAtPlayer();
           save();
-          updateWorld();
+          if (found) render(false, false);
+          else updateWorld();
         }
         focusWorld();
       } else announce("That tile is blocked. Try a path nearby.");
@@ -298,6 +433,65 @@
     if (!button) return;
     rewardMessage = null;
     try {
+      if (button.dataset.openFestival) {
+        openFestival(button.dataset.openFestival);
+        return;
+      }
+      if (button.dataset.festivalAction) {
+        const action = button.dataset.festivalAction,
+          value =
+            action === "coin"
+              ? Number(button.dataset.value)
+              : button.dataset.value;
+        festivalAction(
+          action,
+          value,
+          `[data-festival-action="${action}"]${button.dataset.value ? `[data-value="${button.dataset.value}"]` : ""}`,
+        );
+        return;
+      }
+      if (button.dataset.postcard) {
+        const card = F.postcards.find((c) => c.id === button.dataset.postcard);
+        const freshCard = !saved.festival.postcards.includes(card.id);
+        saved.rpg = F.travel(saved.rpg, card);
+        saved.festival = F.collect(saved.festival, saved.rpg, card.id);
+        saved.talking = null;
+        discovery = freshCard ? card : null;
+        save();
+        render(false, false);
+        return;
+      }
+      if (button.dataset.companion) {
+        saved.festival = F.act(
+          saved.festival,
+          "companion",
+          button.dataset.companion,
+        );
+        save();
+        render(false, false);
+        main
+          .querySelector(`[data-companion="${button.dataset.companion}"]`)
+          ?.focus({ preventScroll: true });
+        announce("Traveling companion updated.");
+        return;
+      }
+      if (button.dataset.action === "close-festival") {
+        closeFestival();
+        return;
+      }
+      if (button.dataset.action === "close-discovery") {
+        discovery = null;
+        render(false, false);
+        focusWorld();
+        return;
+      }
+      if (button.dataset.action === "quick-start") {
+        saved.started = true;
+        saved.talking = null;
+        save();
+        location.hash = "#play/world";
+        return;
+      }
       if (button.dataset.move && !button.dataset.mission) {
         walk(
           ...{ up: [0, -1], down: [0, 1], left: [-1, 0], right: [1, 0] }[
@@ -479,6 +673,7 @@
     };
     saved.started = true;
     saved.talking = null;
+    saved.activeFestival = null;
     rewardMessage = null;
     save();
     location.hash = "#play/world";

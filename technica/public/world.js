@@ -176,6 +176,15 @@
   ];
   const items = [
     {
+      id: "festival-pin",
+      name: "Lanternwake pin",
+      icon: "lantern",
+      festival: true,
+      lesson: "fees",
+      detail:
+        "Three lanterns restored through building, cash handling, and route planning.",
+    },
+    {
       id: "notebook",
       name: "Traveler’s notebook",
       icon: "book",
