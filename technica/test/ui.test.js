@@ -75,6 +75,68 @@ function fixture({ seed, blocked = false, fetcher } = {}) {
   };
   return { dom, w, errors, click, go, submit, start, data };
 }
+test("Learn topics expand and collapse, open practice, and retain completed progress", async (t) => {
+  const f = fixture();
+  t.after(() => f.dom.window.close());
+  const style = f.w.document.createElement("style");
+  style.textContent = fs.readFileSync(
+    path.join(directory, "styles.css"),
+    "utf8",
+  );
+  f.w.document.head.append(style);
+  await f.go("#learn");
+  const doc = f.w.document,
+    card = doc.querySelector(".lesson-card"),
+    before = f.w.localStorage.getItem("harbor-adventure-v1");
+  assert.equal(doc.querySelectorAll(".lesson-card").length, C.lessons.length);
+  assert.equal(card.open, false);
+  assert.equal(
+    f.w.getComputedStyle(card.querySelector(".when-open")).display,
+    "none",
+  );
+  f.click(".lesson-card > summary");
+  assert.equal(card.open, true);
+  assert.equal(
+    f.w.getComputedStyle(card.querySelector(".when-closed")).display,
+    "none",
+  );
+  assert.match(card.querySelector(".lesson-card-content").textContent, /\$140/);
+  f.click(".lesson-card > summary");
+  assert.equal(card.open, false);
+  assert.equal(f.w.localStorage.getItem("harbor-adventure-v1"), before);
+  f.click(".lesson-card > summary");
+  f.click('.lesson-card a[href="#learn/plan"]');
+  await tick();
+  assert.equal(f.w.location.hash, "#learn/plan");
+  const detail = doc.querySelector(".learn-disclosure");
+  assert.equal(detail.open, false);
+  f.click(".learn-disclosure > summary");
+  assert.equal(detail.open, true);
+  assert.match(
+    detail.querySelector(".learn-detail-content").textContent,
+    /resource gap/,
+  );
+  f.click(".learn-disclosure > summary");
+  assert.equal(detail.open, false);
+  f.click('[data-lesson="plan"][data-answer="1"]');
+  assert.match(
+    doc.querySelector("#lesson-feedback").textContent,
+    /try the other answer/,
+  );
+  f.click('[data-lesson="plan"][data-answer="0"]');
+  assert.ok(f.data().learned.includes("plan"));
+  await f.go("#learn");
+  assert.match(
+    doc.querySelector(".learn-progress").textContent,
+    /1 of 6 practiced/,
+  );
+  assert.match(
+    doc.querySelector(".lesson-card .lesson-complete").textContent,
+    /Practiced/,
+  );
+  assert.deepEqual(f.errors, []);
+});
+
 test("RPG entry creates a traveler and replaces Community with the Quest Journal", async (t) => {
   const f = fixture();
   t.after(() => f.dom.window.close());

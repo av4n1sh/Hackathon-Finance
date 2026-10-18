@@ -88,7 +88,7 @@ Equipment is a learning reminder. Equip an unlocked tool in the Journal, then us
 
 ## Learn and inclusion
 
-Six short lessons cover spending plans, fees, suspicious requests, irregular income, borrowing, and unexpected costs. Each has an explanation, fictional example, optional detail, practice feedback, source link, and a return link. Leaving a conversation for Learn preserves the decision, practice inputs, character position, and conversation; these also restore after refresh.
+Six short lessons cover spending plans, fees, suspicious requests, irregular income, borrowing, and unexpected costs. Learn presents native expandable topic cards with explicit expand/collapse controls, an example preview, and a link to the full lesson and practice question. Practiced topics have a completion label. Each lesson has an explanation, fictional example, expandable detail, practice feedback, source link, and a return link. Leaving a conversation for Learn preserves the decision, practice inputs, character position, and conversation; these also restore after refresh.
 
 The story includes cash, shared costs, caregiving, changing income, time, and accessibility without requiring a bank account, card, car, predictable salary, or family support. No fixed savings percentage is prescribed. A shortage of resources is not described as a personal failure.
 
