@@ -1,136 +1,103 @@
-# Harbor Academy
+# Harbor Academy · Everyday money practice
 
-A cream-and-green financial learning prototype with six lessons, six fictional investigations, deterministic ETF and tokenization labs, a Safety Vault, and Money Practice. Written Gemini explanations are optional. No real bank accounts, payments, or trading are connected.
+Harbor helps people practice everyday money decisions in a welcoming environment. The central activity is **Your Money Adventure**, a connected fictional week with five decisions. The interface has only **Play**, **Learn**, and **Community**; a small header panel holds progress.
 
-## Start locally
+## Run
 
-Requires Node.js 18+ (verified on Node 24). Runtime uses built-in Node modules; no runtime dependency installation is needed.
+Requires Node.js 18+. From the workspace root, run `npm.cmd start` and open **http://localhost:3000**. No installation or credentials are needed for runtime. The server binds to `127.0.0.1`; `PORT` defaults to 3000. Restart it after changing server code or the port.
 
-From the workspace root:
+For development: `npm.cmd --prefix technica ci`, then `npm.cmd test`. `npm.cmd --prefix technica run format` formats source using Prettier. The only development dependencies are jsdom for DOM checks and Prettier for formatting.
 
-```powershell
-npm.cmd start
-```
+## One complete learning journey
 
-Open **http://localhost:3000**. VS Code's Chrome launch points to this port; start the server first or use **Start Harbor Academy server**. If you change the port, also update the Chrome launch URL.
+Choose a bag ($48) or raincoat ($42) as the useful purchase in the same five-day story. Start with a clearly labeled simulated $140: $60 set aside for food, shared household costs, and caregiving; $80 available for decisions.
 
-For tests:
+1. Pause or keep a $12 subscription.
+2. Pay for an accessible shuttle or rearrange a caregiving visit for a free ride tomorrow.
+3. Compare a $12 cash-counter pass with a $15 online option including its fee.
+4. Independently verify a suspicious gift-card demand, check with someone, or see the fictional consequence of paying it.
+5. Buy a durable item, pay $32 for a secondhand item plus repair, or wait and keep a buffer.
 
-```powershell
-npm.cmd --prefix technica ci
-npm.cmd test
-```
+Earlier spending changes which final purchases remain affordable. Unaffordable options explain the gap. Each choice immediately changes the budget and gives an authored consequence. Contextual reflections ask players to identify the actual trade-off; correct reasoning earns a named skill badge regardless of spending. Players can retry the current choice, revisit previous days, or replay a different route. There are no wealth rankings, timers, streaks, or penalties for leaving.
 
-## Credentials and product confirmation
+All amounts are integer cents in deterministic code. Restoring a save replays validated choices and recomputes totals rather than trusting saved balances. The ending describes the chosen outcome, costs, and skills. A delayed purchase is a valid ending.
 
-Copy `technica/.env.example` to `technica/.env` only if `.env` does not already exist. Enter newly generated credentials directly in that file:
+## Learn and inclusion
 
-```dotenv
-GEMINI_API_KEY=
-CAPITAL_ONE_API_KEY=
-CAPITAL_ONE_PRODUCT=
-GEMINI_MODEL=
-PORT=
-COOKIE_SECURE=
-```
+Six short lessons address planning, fees, safe payments, irregular income, borrowing, and unexpected costs. Each has a direct explanation, fictional example, optional detail, practice with feedback, supporting source, and a link to the relevant story day. Links return to the current saved decision; they do not skip forward or overwrite the story.
 
-All placeholders above are intentionally empty. `.env` is excluded from version control at both workspace and application levels. Credentials are trimmed and read only on the server. Never put credentials in browser code, messages, screenshots, or logs. Key, model, and product changes in `.env` load on the next API request. Restart the server when changing its port or upgrading server code. Existing externally supplied environment variables take precedence over `.env`.
+Content includes cash payments, changing income, shared bills, caregiving, transport access, and time costs. It does not assume a bank account, credit card, car, fixed salary, family support, or a fixed savings percentage. Feedback explains resource gaps respectfully and treats access and enjoyment as valid factors.
 
-On **My progress**, each integration shows an actionable diagnostic, the last check time, and a **Test connection** button. Missing credentials do not make a provider request. Enter actual keys in `.env`, not `.env.example`. If an old server process is still running, the browser detects its incompatible API version and prompts a restart instead of showing misleading integration states.
+The interface uses a system sans-serif with Georgia reserved for major headings, cream and forest green, large targets, semantic headings, labeled controls, a skip link, visible keyboard focus, text descriptions of all budget information, live feedback, responsive layouts, and reduced-motion CSS. Three-tab transitions slide in the navigation direction. Game state survives tab changes and refresh; contribution drafts remain in memory across tabs, without storing potentially private text in localStorage.
 
-**Capital One product confirmation is required.** The repository did not identify the product that issued the key. The implemented adapter targets **Nessie**, Capital One's synthetic banking sandbox. Confirm that your key came from [Nessie's developer portal](https://nessieisreal.com), then set `CAPITAL_ONE_PRODUCT=nessie`. A key alone does not select a product or prove that it works. If your key came from another portal, leave the product blank and provide that portal URL so the adapter can be reviewed against its actual contract. Do not try unrelated credentials against Nessie.
+English interface and learning copy are centralized in `public/content.js` where practical. App interface strings remain English in `app.js`; a full localization pass must extract those too. No additional language is offered: a translation must include the interface, stories, feedback, consent, removal, and core lessons and receive human review before release.
 
-Use only synthetic practice data in the Nessie sandbox. If it has no checking or savings accounts, create fictional data through the official developer tools, or choose Harbor's local example. Harbor itself makes no provider writes. No additional customer/account ID configuration is required.
+Supporting primary sources checked October 17, 2026:
 
-`GEMINI_MODEL` is optional; the default is `gemini-3.8-flash`. Current official documentation recommends newer models for new projects; access to the older 2.5 models is restricted to previous users. An override must be a valid Gemini model name supported by your Google project. `PORT` defaults to 3000. Set `COOKIE_SECURE=true` only behind HTTPS.
+- [CFPB Your Money, Your Goals toolkit](https://www.consumerfinance.gov/consumer-tools/educator-tool/your-money-your-goals/toolkit/) supports spending plans, cash-flow timing, fees, and borrowing-cost comparisons.
+- [CFPB emergency fund guide](https://www.consumerfinance.gov/an-essential-guide-to-building-an-emergency-fund/) supports adapting savings to circumstances and planning for unexpected costs.
+- [FTC gift-card impersonation warning](https://consumer.ftc.gov/consumer-alerts/2026/01/no-thats-not-your-boss-asking-you-buy-gift-cards) supports pausing urgent requests, independent verification, and contacting a gift card company after a scam.
 
-## What each integration does
+Amounts, narrative, questions, and choices are authored fictional examples, not quotations or personal financial recommendations. Educational content remains available without AI.
 
-| Integration        | Implemented role                                                                                                                                                                 | Honest failure behavior                                                                                                                                                                |
-| ------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Capital One Nessie | Read-only synthetic checking/savings accounts, reported balances, deposit and withdrawal history                                                                                 | Unconfirmed product, absent key, rejected credentials, empty data, malformed responses, timeouts, and rate limits have explicit states. Local examples require a separate user choice. |
-| Gemini             | Written investigation feedback, lesson/concept explanations, terminology, practice questions, reviewed-message guidance, and explanations of displayed Money Practice aggregates | Strict schema and field validation; authored fallback remains available. Failed requests report the problem instead of claiming a live answer.                                         |
+## A real contribution path
 
-Integration status starts **Not tested**. **Last request succeeded** means a relevant request actually completed and passed validation during the current server session. It is not a guarantee about future requests. Loading a local example does not test Capital One. A successful empty sandbox response is distinguished from populated activity. Gemini response provenance and account-data provenance are shown separately.
+Community prominently invites an everyday situation, what makes it difficult, what someone should understand, and optional wording or accessibility improvements. No demographic, contact, or account information is requested. The form asks contributors to leave private details out and permits a nickname or anonymous public credit.
 
-### Verified provider contracts
+The workflow is **Submit → Review → Edit into a learning scenario → Publish with permission**:
 
-Official documentation inspected October 17, 2026:
+- `POST /api/community` validates fields and required adaptation consent, generates a receipt, and persists a private original. Public-publication consent is separate and optional.
+- `GET /api/community` exposes only published, edited learning notes and the contributor’s chosen credit. Original text, review state, and removal hashes never appear there.
+- A reviewer uses **Reviewer access** in the footer (`/review.html`). Authentication is checked on every reviewer API action. The secret stays in page memory, is cleared on locking/leaving, and is never put in browser storage.
+- Reviewers mark a submission reviewed, save a learning draft with a fictional situation, explanation, and description of its contribution, then explicitly confirm source/privacy review before publishing. The server refuses skipped stages and publication without the contributor’s permission. Reviewers can unpublish or decline a suggestion.
+- Published adaptations become **Community learning notes**, visible in Community. Incorporating one into the shipped five-day game requires a deliberate source-code change and review; publication does not silently rewrite the game or claim that it has.
+- The submitter receives a one-time removal code and contribution ID, with a downloadable receipt. `POST /api/community/remove` verifies the receipt, then removes both the stored original and any public adaptation from this server. The code itself is never stored, only its SHA-256 hash. Keep the receipt private: no email is collected to recover it. Removal cannot erase copies someone downloaded elsewhere or independently managed backups.
 
-- [Nessie interactive documentation](https://nessieisreal.com/docs), [published OpenAPI specification](https://nessieisreal.com/nessie-openapi-spec.yaml), and [getting started](https://nessieisreal.com/getting-started).
-- The current documentation configures **`https://prod-api.nessieisreal.com`**, also listed in the published specification. The older getting-started example uses a different hostname; the adapter follows the current interactive specification. “Production” here refers to Nessie's hosted synthetic sandbox service, not real consumer banking.
-- Authentication is the documented `key` query parameter. Only the server constructs this authenticated URL; it is never returned to the browser, included in Gemini context, or logged. Redirects are rejected to avoid forwarding credentials to another host.
-- Requests are restricted to `GET /accounts`, `GET /accounts/{id}/deposits`, and `GET /accounts/{id}/withdrawals`. Accounts are selected from the key-owned listing; the browser receives temporary opaque selection handles. It cannot supply a provider URL or raw provider account ID. Purchases, transfers, bills, account creation, and transaction creation are not implemented.
-- [Gemini model documentation](https://ai.google.dev/gemini-api/docs/models/gemini-3.8-flash), [generateContent reference](https://ai.google.dev/api/generate-content), and [structured outputs](https://ai.google.dev/gemini-api/docs/structured-output). The adapter uses `POST https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent`, an `x-goog-api-key` header, `systemInstruction`, `contents`, and a JSON Schema in `generationConfig.responseJsonSchema`. Incomplete, malformed, extra-field, or oversized output falls back to authored text.
+Storage is `technica/data/contributions.json`, excluded from Git. Writes are serialized and use a temporary file plus atomic rename; successful submission is returned only after disk persistence. Corrupt storage produces a failure instead of overwriting records. The local prototype supports **one Node process on a persistent filesystem**, not multiple workers or ephemeral/serverless hosting. Back up this directory privately if operating a real pilot, and apply receipt-based removal to retained backups. The queue is capped at 1,000 records. Suggestions remain stored until receipt-based removal; declining does not delete them.
 
-Provider requests have a 12-second timeout, bounded response sizes, and no automatic retries. API bodies are capped at 16 KB, API traffic at 120 requests per IP per minute, and cross-origin requests are rejected. These are prototype controls, not a production security certification.
+To enable review, copy `.env.example` to `.env` **only if `.env` does not already exist**, then enter a random `REVIEWER_KEY` of at least 24 characters. For example, generate a new value locally with `node -e "console.log(require('node:crypto').randomBytes(32).toString('hex'))"` and enter it directly in `.env`. Do not commit or share it. Reviewer access fails closed while the key is absent or too short. This shared-secret review model is appropriate for a local hackathon prototype; public hosting needs individual reviewer authentication, HTTPS, and an operational moderation process.
 
-## Money Practice
+The empty public state explicitly says there are no published contributions. Team-written topic prompts are labeled as prompts. There are no invented contributors or testimonials, and no claim of representing a community.
 
-Choose **Load Nessie sandbox** or **Use local example**. Explore an account, inspect activity, compare local categories, answer a largest-outflow question, and try a fictional total-outflow limit. The example does not move funds or modify the account.
+## Optional Gemini assistance
 
-Amounts and totals are computed in application code using integer cents. Only `completed` deposits and withdrawals count; pending/cancelled records remain visible and are excluded. Unknown statuses or invalid amounts cause an explicit provider-data failure. No rows are silently truncated: an oversized response fails. The view covers all returned dates and only these two activity types. It is not a monthly statement, complete spending history, or reconciliation of the reported balance.
+Set `GEMINI_API_KEY` and an enabled `GEMINI_MODEL` in `.env` to use **Explain more simply** in a lesson. There is no assumed default model. Missing configuration, provider failures, incomplete output, oversized output, new numeric values, and generated source URLs return the authored explanation. Configuration reloads on API requests; externally supplied environment variables take priority.
 
-Categories use local description keyword rules (Food, Transport, Home, Leisure, Uncategorized). They are editable-code educational groupings, may be inaccurate, and are not bank-supplied categories. The budget exercise compares your chosen limit to the displayed completed withdrawals; it is not an income forecast.
+The server calls Gemini’s documented [generateContent endpoint](https://ai.google.dev/api/generate-content) with a system instruction and authored lesson context. It may include a restored, recomputed fictional consequence and budget; it never sends community suggestions, private financial details, or free-form user prompts. Output is labeled as optional AI and may still contain mistakes. It never controls balances, allowed actions, reflection answers, badges, or saved progress. The authored lesson and its sources remain the reference.
 
-Gemini receives the learner's question, data provenance, reported balance, aggregate totals, category totals, and record count. It does not receive account/customer identifiers, account numbers, nicknames, or raw transaction descriptions. The server uses its loaded snapshot, not client-submitted financial totals, and rejects an explanation request if its displayed snapshot is stale. Arithmetic never depends on a model response.
+No authenticated Gemini call was made during this rebuild. Provider behavior is verified with mocked success/failure responses, not claimed as live integration proof. The main journey has no provider dependency.
 
-## Local progress and navigation
+Capital One Nessie was removed because account loading and transaction browsing added setup without helping this fictional decision story. Its adapter, routes, configuration, and main experience are gone. ETF and tokenization labs, investigations, and the separate Safety Vault are removed; useful safety guidance now lives in Learn. ElevenLabs and Backboard remain absent. Obsolete award descriptions have been removed.
 
-Lessons, best investigation scores, review notes, preferences, and drafts are saved **in this browser on this site**. There is no cross-device account or synchronization. Clearing browser storage removes local work. If storage is blocked, the interface reports that progress may be lost.
-
-Existing cookie-linked progress files are read only to import previous lesson completions, scores, and notes when no browser snapshot exists. They are not rewritten or erased. The app writes no new disk progress files. During requests, the server keeps a temporary guest session for scoring, provider status, and the currently displayed sandbox snapshot. After a server restart, the browser restores its local learning snapshot. Local scores are editable prototype data, not tamper-proof achievements. Imported old files can be archived manually after verifying the browser copy.
-
-Best-score scoring, sequential unlocks, authored case explanations, and 50 XP per completed lesson are preserved. Token balances remain a local fictional simulation that resets on refresh. ETF mixes, fee assumptions, and saved comparisons persist locally.
-
-Shared tab transitions use 230 ms horizontal slides and gentle fades. Later tabs enter from the right; earlier tabs enter from the left. The outgoing visual copy is inert, hidden from assistive technology, stripped of IDs, and removed after animation. The content area clips horizontal movement and animates measured height changes. New navigation cancels old animation; the active indicator updates immediately. The header stays stationary. Reduced-motion users switch instantly. Detached forms retain their inputs and handlers; late responses cannot replace another screen. Main content receives focus after routing; deep Vault links focus the requested entry.
-
-## Architecture
+## Architecture and boundaries
 
 ```text
-server.js                 HTTP routes, validation, temporary sessions, static files
-lib/providers.js          Gemini request/response validation and redaction
-lib/config.js             server-only .env parsing and configuration refresh
-lib/money.js              Nessie read-only adapter, normalization, deterministic totals
-lib/store.js              temporary sessions, local-snapshot validation, legacy import
-lib/scoring.js            deterministic investigation scoring and authored feedback
-public/money-view.js      Money Practice, activity tables, budgeting, explanations
-public/app.js             shared routing, transitions, drafts, guide, progress
-public/lesson-view.js     lesson shortcuts, written checks and feedback
-public/content.js         lesson questions and source metadata
-public/lesson-details.js  expanded teaching, examples, choice feedback
-public/cases.js            fictional evidence cases
-public/case-actions.js    case-specific decisions and authored consequences
-public/finance.js         ETF allocation, fee projection, token arithmetic
-public/token-view.js      guided fictional 100-unit transfer exercise
-public/vault.js           searchable sourced terminology and safety topics
-public/styles.css         responsive typography and cream/green visual system
-test/*.test.js            deterministic, HTTP, mock-provider and DOM checks
+server.js                 Local HTTP server, same-origin checks, rate/body limits, reviewer auth
+lib/community.js          Validated private storage, moderation transitions, removal receipts
+lib/guide.js              Optional bounded Gemini rephrasing with authored fallback
+lib/config.js             Server-only .env parsing and refresh
+public/content.js         English lesson/story/goal/reflection catalogue and sources
+public/game.js            Shared deterministic state transitions, restoration, cents arithmetic
+public/app.js             Play/Learn/Community UI, routing, browser progress, draft memory
+public/review.html/js      Protected reviewer workflow UI (API access requires the key)
+public/styles.css         Responsive cream/green interface and reduced motion
+test/*.test.js            Branch arithmetic, API/storage/auth, and DOM journeys
 ```
 
-No runtime provider SDKs or dependencies are required. Development dependencies are jsdom and Prettier. Production authentication, cross-device storage, public hosting, and real financial account access are outside this prototype.
+Progress and badges belong to this browser and site origin. They are editable prototype data, not secure credentials or verified achievements. Clearing site storage removes them. Old prototype progress is left untouched under its previous keys; it is not converted into badges for new skills. No new disk-based learner profiles or cookies are created. Storage failures are visible and in-memory play still works.
 
-## Demonstration and award evidence
+Static files are confined to the public directory, including realpath checks. API requests have a 16 KB body limit, same-origin checks, and an in-memory limit of 100 requests per IP per minute. Reviewer responses and API data are not cached; CSP restricts scripts and network requests to this server. These local prototype controls do not replace production operations.
 
-These are descriptions of implemented work, **not award-eligibility claims**. In particular, API integration alone does not establish eligibility for any Capital One award. Check actual event rules separately.
+## Verification and participation plan
 
-| Demonstration area | Reproducible evidence                                                                                              |
-| ------------------ | ------------------------------------------------------------------------------------------------------------------ |
-| Education          | Complete a lesson, inspect authored feedback, then revisit a related concept in the Vault.                         |
-| Gamification       | Submit an investigation and replay; equal scores do not add XP.                                                    |
-| Gemini use         | With working credentials, ask about a lesson or displayed Money Practice totals; verify the actual response state. |
-| Capital One use    | With a confirmed Nessie key and synthetic records, load an account and inspect read-only deposits/withdrawals.     |
-| Financial learning | Compare fictional ETF costs and losses, investigate a promotional claim, and test a budgeting limit.               |
-| UX                 | Navigate forward/backward, rapidly change tabs, return to unfinished work, and test reduced motion.                |
+Run `npm.cmd test` from the root. Checks cover every affordable game branch for both goals, integer-cent conservation, unaffordable paths, reasoning badges, retry/restoration, lesson links, missing-provider behavior, private contribution persistence across server instances, concurrent submissions, storage failure, moderation authorization, consent/stage enforcement, publication/unpublication, removal, request limits, DOM completion, navigation/focus, input labels, draft preservation, and safe rendering of submitted text.
 
-For a three-minute demonstration: complete the first lesson, compare ETF fees, classify a few investigation clues, explore Money Practice (clearly identify its source), request a written explanation, then refresh and show browser-saved progress. Demonstrate local examples honestly if authenticated calls are unavailable.
+No connected browser was available during this rebuild. jsdom does not render CSS; desktop/mobile appearance, real keyboard operation, screen-reader behavior, and motion quality still require manual verification. No volunteer usability sessions or demographic effectiveness claims are reported. The [usability script](USABILITY.md) defines the outstanding human checks.
 
-## Verification and remaining setup
+Invite voluntary feedback through local community organizations, disability/accessibility groups, adult learning programs, students, and people with different payment and income arrangements. Ask about access needs and preferred participation format without requiring demographic disclosure. Offer a short session, an asynchronous text version, or an assisted walkthrough. Explain what will be recorded, request consent, allow skipping any task, and offer attribution only with permission. Avoid recruiting through claims that a group is represented here.
 
-The automated suite covers 15 tests, including the full learning/investigation journey, unchanged scoring, deterministic labs, local snapshot restoration after server restart, legacy import without new file writes, request validation, same-origin controls, rate limiting, and guest separation. Provider tests mock Nessie's documented paths/query authentication and Gemini's request/response schema. They cover credentials rejected, rate limits, timeout, malformed output, empty sandbox, aggregate-only Gemini context, and removed routes returning 404. Configuration tests check blank values, comments, quotes, and whitespace. API and DOM tests cover connection diagnostics, Money Practice, local persistence, forward/backward slide direction, cancellation, inert outgoing views, reduced motion, rapid routing, and preserved forms.
+Record observed task completion, confusion, inaccessible controls, unfamiliar language, and suggested situations without personal financial details. Review suggestions, prioritize recurring barriers with participants, edit and source-check proposed scenarios, then seek publication permission. Return a plain-language change summary to volunteers who opt in through an independently managed contact process. Keep research notes outside this public repository; publish only consented, anonymous findings. Do not call this plan completed research.
 
-**No authenticated live provider request has been verified in this change.** Documentation retrieval and mock responses are not live integration proof. The user needs to confirm the key's developer portal, enter the new keys in `.env`, and test the relevant buttons. A configured key never automatically marks an integration working.
+## Recovery and handoff
 
-No connected browser is available in this environment. jsdom does not render CSS: desktop/mobile appearance, smoothness, overflow, actual height interpolation, real keyboard/assistive-technology behavior, and touch interactions still need a manual browser check.
-
-Educational financial references remain linked inside lessons and the Vault. ETF projections use invented repeated returns and simplified annual fees; diversification does not guarantee gains. Token records do not create legal title or liquidity. The ocean image is served locally from `public/assets/coast.jpg`; [original image source](https://images.unsplash.com/photo-1473116763249-2faaef81ccda).
+Before rebuilding, the clean baseline was preserved at commit `84315f4` and tag `archive/harbor-before-adventure-2026-10-17`. The archive retains the earlier implementation and documentation. Current runtime has no external dependencies. This delivery updates the GitHub source repository; it does not create a public hosting deployment.

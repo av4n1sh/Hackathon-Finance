@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -6,110 +6,57 @@
     <meta name="theme-color" content="#174c3c" />
     <meta
       name="description"
-      content="Investigate financial scams, explore fictional portfolios, and learn by doing. A safer harbor for your financial future."
+      content="Practice everyday money choices. Learn as you play. A free, welcoming game with fictional money and room to try again."
     />
-    <title>Harbor Academy · A safer financial future</title>
+    <title>Harbor Academy · Everyday choices, new possibilities</title>
     <link rel="icon" href="assets/mark.svg" type="image/svg+xml" />
     <link rel="stylesheet" href="styles.css" />
-    <script src="case-actions.js" defer></script>
-    <script src="cases.js" defer></script>
-    <script src="lesson-details.js" defer></script>
     <script src="content.js" defer></script>
-    <script src="vault.js" defer></script>
-    <script src="finance.js" defer></script>
-    <script src="lesson-view.js" defer></script>
-    <script src="token-view.js" defer></script>
-    <script src="money-view.js" defer></script>
+    <script src="game.js" defer></script>
     <script src="app.js" defer></script>
   </head>
   <body>
-    <a href="#main" class="skip">Skip to content</a>
+    <a class="skip" href="#main">Skip to content</a>
     <header class="site-header">
-      <a class="brand" href="#home" aria-label="Harbor Academy home"
-        ><img src="assets/mark.svg" alt="" width="37" height="37" /><span
-          >harbor<span class="brand-sub">ACADEMY</span></span
+      <a href="#play" class="brand" aria-label="Harbor Academy, Play"
+        ><img src="assets/mark.svg" alt="" width="40" height="40" /><span
+          >harbor <span class="brand-small">academy</span></span
         ></a
       >
-      <button
-        class="menu-toggle"
-        id="menu-toggle"
-        aria-controls="main-navigation"
-        aria-expanded="false"
-        type="button"
-      >
-        Menu
-      </button>
-      <nav id="main-navigation" aria-label="Main navigation">
-        <a href="#learn">Learn</a><a href="#investigations">Investigations</a
-        ><a href="#etf">ETF Lab</a><a href="#money">Money Practice</a
-        ><a href="#tokens">Tokenization Lab</a><a href="#vault">Safety Vault</a>
+      <nav aria-label="Main navigation">
+        <a href="#play">Play</a><a href="#learn">Learn</a
+        ><a href="#community">Community</a>
       </nav>
-      <a href="#progress" class="progress-link"
-        ><span class="progress-dot"></span><span id="nav-xp">My progress</span>
-        <span aria-hidden="true">↗</span></a
-      >
+      <details class="progress-panel">
+        <summary>Your progress <span aria-hidden="true">↗</span></summary>
+        <div id="progress-content"></div>
+      </details>
     </header>
-    <main id="main" tabindex="-1">
-      <div class="loading-page">Preparing your harbor…</div>
-    </main>
-    <footer class="site-footer">
-      <a class="footer-brand" href="#home">harbor academy.</a>
-      <p>Learn, compare, and verify before you decide.</p>
-      <div class="footer-bottom">
-        <span>Built for curious minds · Technica 2026</span
-        ><span>Education only. Fictional funds. No real money.</span
-        ><a href="#progress">Your local progress ↗</a>
-      </div>
-    </footer>
-    <button
-      class="guide-launch"
-      id="guide-open"
-      aria-controls="guide-panel"
-      aria-expanded="false"
+    <div
+      id="storage-message"
+      role="status"
+      class="storage-message"
+      hidden
+    ></div>
+    <main id="main" tabindex="-1"><p>Getting your adventure ready…</p></main>
+    <noscript
+      ><p class="notice">
+        The game needs JavaScript enabled. No account or API key is needed.
+      </p></noscript
     >
-      Ask Harbor Guide
-    </button>
-    <dialog id="guide-panel" class="guide-panel" aria-labelledby="guide-title">
-      <div class="guide-head">
-        <div>
-          <span class="eyebrow">FINANCIAL LEARNING GUIDE</span>
-          <h2 id="guide-title">Your Harbor Guide</h2>
-        </div>
-        <button class="icon-button" id="guide-close" aria-label="Close guide">
-          ×
-        </button>
-      </div>
-      <p class="muted">
-        Ask about a concept, your experiment, or a decision. Educational
-        explanations, never personal investment advice.
-      </p>
-      <label for="guide-topic">Learning context</label
-      ><select id="guide-topic"></select>
-      <form id="guide-form">
-        <label for="guide-question">What would you like to understand?</label
-        ><textarea
-          id="guide-question"
-          rows="3"
-          maxlength="1200"
-          placeholder="Why do small fees matter over time?"
-          required
-        ></textarea
-        ><button class="button" type="submit">
-          Ask your guide <span aria-hidden="true">↗</span>
-        </button>
-      </form>
-      <div id="guide-answer" class="guide-answer" aria-live="polite">
-        <span class="status demo">Demo</span>
-        <p>
-          Without a Gemini key, your guide uses authored learning notes. Your
-          current topic and saved review notes shape the explanation.
-        </p>
-      </div>
-      <button class="text-button" id="practice-button">
-        Give me a practice question →
-      </button>
-      <div id="practice-result" aria-live="polite"></div>
-    </dialog>
-    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <footer>
+      <a class="footer-brand" href="#play"
+        >A little practice. More possibilities.</a
+      >
+      <p>Fictional money. Real-life skills. Room to try again.</p>
+      <span>Harbor Academy · Education, at your pace</span
+      ><a href="review.html">Reviewer access</a>
+    </footer>
+    <div
+      id="announcement"
+      role="status"
+      aria-live="polite"
+      class="sr-only"
+    ></div>
   </body>
 </html>
