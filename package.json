@@ -1,0 +1,12 @@
+{
+  "name": "harbor-academy-workspace",
+  "private": true,
+  "scripts": {
+    "dev": "node technica/server.js",
+    "start": "node technica/server.js",
+    "test": "npm --prefix technica test"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
