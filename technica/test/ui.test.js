@@ -33,7 +33,7 @@ function fixture({ seed, fetcher, storageBlocked = false } = {}) {
         throw new Error("Blocked");
       },
     });
-  for (const file of ["content.js", "game.js", "app.js"])
+  for (const file of ["content.js", "game.js", "play.js", "app.js"])
     w.eval(fs.readFileSync(path.join(directory, file), "utf8"));
   const click = (selector) => {
     const el = w.document.querySelector(selector);
@@ -332,4 +332,78 @@ test("optional AI errors retain authored help and late responses cannot replace 
     /Everyday choices/,
   );
   assert.deepEqual(f.errors, []);
+});
+
+test("activities, eight unique stamps, map rewinds, and replay collection persist together", async (t) => {
+  const f = fixture();
+  t.after(() => f.dom.window.close());
+  await f.go("#play/setup");
+  f.submit("#start-form");
+  await tick();
+  assert.equal(f.w.document.querySelectorAll(".harbor-map li").length, 5);
+  for (let day = 0; day < 5; day++) {
+    if (day === 0) {
+      for (let i = 0; i < 6; i++)
+        f.click('[data-mission=plan][data-move="1000"]');
+      assert.match(
+        f.w.document.querySelector(".mission-feedback").textContent,
+        /Both needs fit/,
+      );
+      assert.equal(f.w.document.activeElement.dataset.mission, "plan");
+      assert.ok(
+        !f.w.document.querySelector("main").classList.contains("route-in"),
+      );
+    }
+    if (day === 2) {
+      f.click("[data-mission=receipt][data-item=fare]");
+      f.click("[data-mission=receipt][data-item=fee]");
+      assert.match(
+        f.w.document.querySelector(".receipt-total").textContent,
+        /\$15/,
+      );
+    }
+    if (day === 3)
+      for (const clue of ["urgency", "gift", "verify"])
+        f.click(`[data-mission=message][data-item=${clue}]`);
+    f.click('[data-choice="0"]');
+    f.click(`[data-reason="${C.steps[day].reflection.correct}"]`);
+    f.click("[data-action=next]");
+  }
+  assert.match(
+    f.w.document.querySelector(".skill-passport").textContent,
+    /Everyday explorer/,
+  );
+  assert.equal(
+    f.w.document.querySelectorAll(".stamp-collection .earned").length,
+    8,
+  );
+  assert.equal(f.w.document.querySelectorAll(".harbor-map .visited").length, 5);
+  const seed = f.w.localStorage.getItem("harbor-adventure-v1");
+  const second = fixture({ seed });
+  t.after(() => second.dom.window.close());
+  await second.go("#play/story");
+  second.click('[data-revisit="0"]');
+  assert.match(
+    second.w.document.querySelector(".harbor-map [aria-current=step]")
+      .textContent,
+    /Home base/,
+  );
+  assert.match(
+    second.w.document.querySelector("#progress-content").textContent,
+    /8 of 8/,
+  );
+  second.click('[data-mission=plan][data-move="-1000"]');
+  second.click('[data-mission=plan][data-move="1000"]');
+  assert.equal(second.w.document.querySelector(".reward-toast"), null);
+  second.click('[data-choice="1"]');
+  second.click('[data-reason="0"]');
+  second.click("[data-action=next]");
+  const restored = JSON.parse(
+    second.w.localStorage.getItem("harbor-adventure-v1"),
+  );
+  assert.equal(restored.explored.length, 6);
+  assert.equal(restored.missionStamps.length, 3);
+  assert.equal(restored.mastered.length, 5);
+  assert.deepEqual(f.errors, []);
+  assert.deepEqual(second.errors, []);
 });

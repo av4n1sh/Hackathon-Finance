@@ -8,6 +8,7 @@
     goal: C.goals.some((g) => g.id === goal) ? goal : "bag",
     answers: [],
     pending: null,
+    missions: {},
   });
   const goalFor = (state) =>
     C.goals.find((g) => g.id === state.goal) || C.goals[0];
@@ -85,9 +86,127 @@
       if (raw.pending.reason !== null)
         state = reflect(state, raw.pending.reason);
     }
+    if (raw.missions !== undefined) {
+      if (
+        !raw.missions ||
+        typeof raw.missions !== "object" ||
+        Array.isArray(raw.missions)
+      )
+        throw new Error("Saved activities are invalid.");
+      for (const [id, value] of Object.entries(raw.missions)) {
+        const mission = C.missions.find((m) => m.id === id);
+        if (!mission || mission.step > state.answers.length)
+          throw new Error("Saved activity is unavailable.");
+        state.missions[id] = validateMission(id, value);
+      }
+    }
     return state;
   }
-  const api = { initial, snapshot, choose, reflect, next, restore, cost };
+  function validateMission(id, value) {
+    if (id === "plan") {
+      if (
+        !Number.isInteger(value) ||
+        value < 0 ||
+        value > 14000 ||
+        value % 1000 !== 0
+      )
+        throw new Error("Move money in $10 steps within the practice budget.");
+      return value;
+    }
+    const allowed =
+      id === "receipt" ? ["fare", "fee"] : ["urgency", "gift", "verify"];
+    if (
+      !Array.isArray(value) ||
+      value.length > allowed.length ||
+      value.some((v) => !allowed.includes(v))
+    )
+      throw new Error("Choose an available activity item.");
+    return [...new Set(value)];
+  }
+  function interact(state, id, action) {
+    const mission = C.missions.find((m) => m.id === id);
+    if (!mission || mission.step !== state.answers.length)
+      throw new Error("Visit this activity’s day to play.");
+    const current = state.missions?.[id] ?? (id === "plan" ? 0 : []);
+    const value =
+      id === "plan"
+        ? current + action
+        : current.includes(action)
+          ? current.filter((item) => item !== action)
+          : [...current, action];
+    if (id === "plan" && ![-1000, 1000].includes(action))
+      throw new Error("Move one $10 note at a time.");
+    return {
+      ...state,
+      missions: { ...state.missions, [id]: validateMission(id, value) },
+    };
+  }
+  function missionStatus(state) {
+    return C.missions.map((m) => {
+      const value = state.missions?.[m.id];
+      const complete =
+        m.id === "plan"
+          ? Number.isInteger(value) &&
+            value >= 6000 &&
+            14000 - value >= goalFor(state).price
+          : Array.isArray(value) &&
+            (m.id === "receipt"
+              ? ["fare", "fee"]
+              : ["urgency", "gift", "verify"]
+            ).every((id) => value.includes(id));
+      return { ...m, complete };
+    });
+  }
+  function rewind(state, index) {
+    if (
+      !Number.isInteger(index) ||
+      index < 0 ||
+      index >= C.steps.length ||
+      index >= state.answers.length
+    )
+      throw new Error("Choose a completed day to revisit.");
+    return {
+      ...state,
+      answers: state.answers.slice(0, index),
+      pending: null,
+      missions: Object.fromEntries(
+        Object.entries(state.missions || {}).filter(
+          ([id]) => C.missions.find((m) => m.id === id).step <= index,
+        ),
+      ),
+    };
+  }
+  function passport(skills = [], stamps = []) {
+    const earned = [
+      ...C.steps.filter((s) => skills.includes(s.skill)).map((s) => s.skill),
+      ...C.missions.filter((m) => stamps.includes(m.id)).map((m) => m.reward),
+    ];
+    return {
+      earned,
+      total: C.steps.length + C.missions.length,
+      rank:
+        earned.length >= 8
+          ? "Everyday explorer"
+          : earned.length >= 4
+            ? "Money navigator"
+            : earned.length >= 1
+              ? "Curious explorer"
+              : "Ready to explore",
+    };
+  }
+  const api = {
+    initial,
+    snapshot,
+    choose,
+    reflect,
+    next,
+    restore,
+    cost,
+    interact,
+    missionStatus,
+    rewind,
+    passport,
+  };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
   else root.HarborGame = api;
 })(typeof window === "undefined" ? globalThis : window);

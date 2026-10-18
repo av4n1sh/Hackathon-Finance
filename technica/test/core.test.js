@@ -88,3 +88,70 @@ test("configuration preserves blank lines, trims values, and excludes removed pr
     { GEMINI_API_KEY: "", GEMINI_MODEL: "gemini-example", REVIEWER_KEY: "abc" },
   );
 });
+
+test("hands-on activities compute their own outcomes without changing story funds", () => {
+  let state = G.initial();
+  for (let i = 0; i < 6; i++) state = G.interact(state, "plan", 1000);
+  assert.equal(G.missionStatus(state)[0].complete, true);
+  assert.equal(G.snapshot(state).available, 8000);
+  for (let i = 0; i < 4; i++) state = G.interact(state, "plan", 1000);
+  assert.equal(G.missionStatus(state)[0].complete, false);
+  assert.throws(() => G.interact(state, "plan", 1));
+  assert.throws(() => G.interact(state, "receipt", "fee"));
+  state = G.next(G.reflect(G.choose(state, 0), 0));
+  state = G.next(G.reflect(G.choose(state, 0), 1));
+  state = G.interact(state, "receipt", "fee");
+  assert.equal(G.missionStatus(state)[1].complete, false);
+  state = G.interact(state, "receipt", "fare");
+  assert.equal(G.missionStatus(state)[1].complete, true);
+  state = G.interact(state, "receipt", "fare");
+  assert.equal(G.missionStatus(state)[1].complete, false);
+  assert.throws(() => G.interact(state, "receipt", "free-money"));
+  state = G.next(G.reflect(G.choose(state, 0), 1));
+  for (const clue of ["urgency", "gift"])
+    state = G.interact(state, "message", clue);
+  assert.equal(G.missionStatus(state)[2].complete, false);
+  state = G.interact(state, "message", "verify");
+  assert.equal(G.missionStatus(state)[2].complete, true);
+  assert.deepEqual(G.restore(JSON.parse(JSON.stringify(state))), state);
+});
+
+test("legacy saves restore, future activities are rejected, and rewind clears later actions", () => {
+  const legacy = { version: 1, goal: "bag", answers: [], pending: null };
+  assert.deepEqual(G.restore(legacy).missions, {});
+  assert.throws(() =>
+    G.restore({ ...legacy, missions: { receipt: ["fare", "fee"] } }),
+  );
+  assert.throws(() => G.restore({ ...legacy, missions: { plan: -1000 } }));
+  assert.throws(() => G.restore({ ...legacy, missions: { plan: "6000" } }));
+  assert.throws(() => G.restore({ ...legacy, missions: { unknown: [] } }));
+  let state = G.initial();
+  for (let i = 0; i < 3; i++)
+    state = G.next(
+      G.reflect(G.choose(state, 0), C.steps[i].reflection.correct),
+    );
+  state = G.interact(state, "message", "urgency");
+  state = G.rewind(state, 0);
+  assert.equal(state.answers.length, 0);
+  assert.equal(state.pending, null);
+  assert.equal(state.missions.message, undefined);
+  assert.throws(() => G.rewind(state, -1));
+  assert.throws(() => G.rewind(state, 3));
+});
+
+test("passport milestones are unique learning stamps and never depend on wealth", () => {
+  assert.equal(G.passport().rank, "Ready to explore");
+  assert.equal(
+    G.passport(["Fee finder", "Fee finder"], ["receipt", "receipt"]).earned
+      .length,
+    2,
+  );
+  const all = G.passport(
+    C.steps.map((s) => s.skill),
+    C.missions.map((m) => m.id),
+  );
+  assert.equal(all.earned.length, 8);
+  assert.equal(all.total, 8);
+  assert.equal(all.rank, "Everyday explorer");
+  assert.equal(G.passport(["made up"], ["unknown"]).earned.length, 0);
+});

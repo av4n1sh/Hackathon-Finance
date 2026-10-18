@@ -1,7 +1,8 @@
 "use strict";
 (() => {
   const C = window.HarborContent,
-    G = window.HarborGame;
+    G = window.HarborGame,
+    P = window.HarborPlay;
   const main = document.querySelector("#main");
   const escape = (value) =>
     String(value).replace(
@@ -28,10 +29,13 @@
     learned: [],
     mastered: [],
     completedGoals: [],
+    missionStamps: [],
+    explored: [],
   };
   let draft = {},
     receipt = null,
-    previousTab = "play";
+    previousTab = "play",
+    rewardMessage = null;
   const warnStorage = (message) => {
     const el = document.querySelector("#storage-message");
     el.hidden = false;
@@ -53,6 +57,16 @@
           ? raw.completedGoals
           : []
         ).filter((id) => C.goals.some((g) => g.id === id)),
+        missionStamps: (Array.isArray(raw.missionStamps)
+          ? raw.missionStamps
+          : []
+        ).filter((id) => C.missions.some((m) => m.id === id)),
+        explored: (Array.isArray(raw.explored) ? raw.explored : []).filter(
+          (key) =>
+            C.steps.some((step, i) =>
+              step.choices.some((choice, j) => key === `${i}:${j}`),
+            ),
+        ),
       };
   } catch {
     warnStorage(
@@ -60,6 +74,7 @@
     );
   }
   function save() {
+    collectRewards();
     try {
       localStorage.setItem(KEY, JSON.stringify(saved));
     } catch {
@@ -69,12 +84,39 @@
     }
     progress();
   }
+  function collectRewards(celebrate = true) {
+    const newSkills = G.snapshot(saved.game).badges.filter(
+      (skill) => !saved.mastered.includes(skill),
+    );
+    const newMissions = G.missionStatus(saved.game).filter(
+      (m) => m.complete && !saved.missionStamps.includes(m.id),
+    );
+    saved.mastered = [...new Set([...saved.mastered, ...newSkills])];
+    saved.missionStamps = [
+      ...new Set([...saved.missionStamps, ...newMissions.map((m) => m.id)]),
+    ];
+    saved.explored = [
+      ...new Set([
+        ...saved.explored,
+        ...saved.game.answers.map((a, i) => `${i}:${a.choice}`),
+      ]),
+    ];
+    if (celebrate && (newSkills.length || newMissions.length))
+      rewardMessage = `New passport stamp: ${[...newSkills, ...newMissions.map((m) => m.reward)].join(", ")}!`;
+  }
   function progress() {
     const skills = [
       ...new Set([...saved.mastered, ...G.snapshot(saved.game).badges]),
     ];
     document.querySelector("#progress-content").innerHTML =
       `<h2>Your learning, at your pace</h2><p>${saved.game.answers.length} of 5 story decisions completed<br>${saved.learned.length} of ${C.lessons.length} lesson checks practiced</p>${skills.length ? `<ul>${skills.map((s) => `<li>${escape(s)}</li>`).join("")}</ul>` : "<p>Skill badges appear when you explain a trade-off in the story.</p>"}<p class="small muted">Saved in this browser on this site. No account or streaks.</p><details><summary>Reset local progress</summary><p>This clears this game’s saved learning progress.</p><button class="secondary" data-action="clear">Clear my progress</button></details>`;
+    const passport = G.passport(saved.mastered, saved.missionStamps);
+    document
+      .querySelector("#progress-content h2")
+      .insertAdjacentHTML(
+        "afterend",
+        `<p class="passport-mini"><strong>${passport.rank}</strong><br>✦ ${passport.earned.length} of ${passport.total} unique skill stamps</p>`,
+      );
   }
   function announce(value) {
     document.querySelector("#announcement").textContent = value;
@@ -196,7 +238,7 @@
           '<p class="error">Reviewed contributions could not load. <button class="text-button" data-action="load-contributions">Try again</button></p>';
     }
   }
-  function render(focus = true) {
+  function render(focus = true, animate = true) {
     const [requested, sub] = location.hash.slice(1).split("/");
     const tab = ["play", "learn", "community"].includes(requested)
       ? requested
@@ -213,12 +255,34 @@
             : sub === "story"
               ? story()
               : home();
+    if (tab === "play") {
+      if (sub === "story" && saved.started) {
+        main
+          .querySelector(".journey-layout")
+          .insertAdjacentHTML("beforebegin", P.board(saved.game));
+        main
+          .querySelector(".harbor-map")
+          .insertAdjacentHTML("beforebegin", P.hud(saved));
+        if (!G.snapshot(saved.game).complete)
+          main
+            .querySelector(".decision > p")
+            .insertAdjacentHTML("afterend", P.activity(saved.game));
+        else main.insertAdjacentHTML("beforeend", P.passport(saved));
+      } else if (sub !== "setup")
+        main.insertAdjacentHTML("beforeend", P.passport(saved));
+    }
+    if (rewardMessage)
+      main.insertAdjacentHTML(
+        "beforeend",
+        `<div class="reward-toast" role="status"><span class="reward-star" aria-hidden="true">✦</span><span>${escape(rewardMessage)}</span><button class="text-button" data-action="dismiss-reward" aria-label="Dismiss stamp celebration">Got it</button></div>`,
+      );
     void main.offsetWidth;
-    main.classList.add(
-      order.indexOf(tab) < order.indexOf(previousTab)
-        ? "route-back"
-        : "route-in",
-    );
+    if (animate)
+      main.classList.add(
+        order.indexOf(tab) < order.indexOf(previousTab)
+          ? "route-back"
+          : "route-in",
+      );
     previousTab = tab;
     document.querySelectorAll("nav a").forEach((a) => {
       if (a.hash === "#" + tab) a.setAttribute("aria-current", "page");
@@ -244,6 +308,30 @@
     const button = event.target.closest("button");
     if (!button) return;
     try {
+      rewardMessage = null;
+      if (button.dataset.action === "dismiss-reward")
+        button.closest(".reward-toast").remove();
+      if (button.dataset.mission) {
+        const selector = `[data-mission="${button.dataset.mission}"][${button.hasAttribute("data-move") ? `data-move="${button.dataset.move}"` : `data-item="${button.dataset.item}"`}]`;
+        saved.game = G.interact(
+          saved.game,
+          button.dataset.mission,
+          button.hasAttribute("data-move")
+            ? Number(button.dataset.move)
+            : button.dataset.item,
+        );
+        save();
+        render(false, false);
+        main.querySelector(selector)?.focus({ preventScroll: true });
+      }
+      if (button.hasAttribute("data-revisit")) {
+        saved.game = G.rewind(saved.game, Number(button.dataset.revisit));
+        save();
+        render();
+        announce(
+          `Back at ${C.places[saved.game.answers.length].name}. Earned passport stamps are kept.`,
+        );
+      }
       if (button.hasAttribute("data-choice")) {
         saved.game = G.choose(saved.game, Number(button.dataset.choice));
         save();
@@ -256,7 +344,7 @@
       if (button.hasAttribute("data-reason")) {
         saved.game = G.reflect(saved.game, Number(button.dataset.reason));
         save();
-        render(false);
+        render(false, false);
         const selected = main.querySelector(
           `[data-reason="${button.dataset.reason}"]`,
         );
@@ -281,8 +369,7 @@
         render();
       }
       if (button.dataset.action === "back") {
-        saved.game.answers.pop();
-        saved.game.pending = null;
+        saved.game = G.rewind(saved.game, saved.game.answers.length - 1);
         save();
         render();
       }
@@ -293,6 +380,8 @@
           learned: [],
           mastered: [],
           completedGoals: [],
+          missionStamps: [],
+          explored: [],
         };
         save();
         location.hash = "#play";
@@ -403,5 +492,6 @@
     }
   });
   window.addEventListener("hashchange", () => render());
+  collectRewards(false);
   render(false);
 })();

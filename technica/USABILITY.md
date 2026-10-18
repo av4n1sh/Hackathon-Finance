@@ -17,6 +17,8 @@ Ask the volunteer to do these tasks, without explaining where to click:
 9. Suggest a fictional money situation. Explain the two permissions before submitting. Save the receipt and find the removal form. For pilot sessions, use a designated local test server and explain how test submissions will be handled.
 10. Navigate the three tabs and complete a decision with a keyboard or the volunteer’s usual assistive input. On a phone, check text, buttons, budget, forms, and horizontal overflow. With reduced motion enabled, check that transitions stop.
 
+For the expanded game, ask volunteers to arrange the practice envelopes, assemble the online receipt, and inspect the suspicious message. Check whether they understand that the envelope board is separate from the story balance, why a stamp is earned, and that the message has no running timer. Ask them to revisit a completed map stop, explain which later choices reset, and find their retained stamps in the passport. Verify that repeating an activity does not add a duplicate stamp. Observe whether the map, celebrations, or additional controls help or distract; do not assume they improve learning without testing.
+
 Ask afterward: “What situation is missing?”, “Which wording could be clearer?”, “Did anything make an assumption about you?”, and “What would make it easier to participate?” Do not ask participants to prove or disclose their circumstances.
 
 Record task completion (independent / assisted / not completed), exact points of hesitation, misunderstood text, access barriers, device/input context if volunteered, and concrete requested changes. Distinguish observed behavior from interpretation. Do not infer demographic effectiveness from a small sample.

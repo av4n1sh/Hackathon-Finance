@@ -22,6 +22,18 @@ Earlier spending changes which final purchases remain affordable. Unaffordable o
 
 All amounts are integer cents in deterministic code. Restoring a save replays validated choices and recomputes totals rather than trusting saved balances. The ending describes the chosen outcome, costs, and skills. A delayed purchase is a valid ending.
 
+### More ways to play
+
+The harbor map shows five illustrated stops, your current location, and the route you chose. Revisit any completed stop to replay from that day; later decisions and activities reset, while earned learning stamps remain in your passport. Upcoming stops are shown without allowing the story to be skipped.
+
+Three optional hands-on activities make the skills something you do:
+
+- **Envelope arranger (day 1):** move $10 notes between practice envelopes to cover essentials and a purchase. Several splits work. This separate board does not change the story’s established $60/$80 starting split.
+- **Receipt builder (day 3):** add and remove the advertised pass and service charges to reveal the full online price.
+- **Message detective (day 4):** inspect urgency and a gift-card request, then choose an independent verification route. The message’s deadline is fictional; no timer runs.
+
+Five reasoning badges and these three activities form eight unique passport stamps. Milestones progress from **Ready to explore** to **Curious explorer**, **Money navigator**, and **Everyday explorer**. Stamps reflect demonstrated skills, not money left. They can be earned once each; repeating an activity does not generate extra rewards. A visible stamp meter and dismissible celebration mark progress. The passport also remembers distinct completed choices across replays. Everything stays local to this browser; previous saves are supported. All new controls work with buttons and keyboard focus, with text outcomes and reduced-motion support.
+
 ## Learn and inclusion
 
 Six short lessons address planning, fees, safe payments, irregular income, borrowing, and unexpected costs. Each has a direct explanation, fictional example, optional detail, practice with feedback, supporting source, and a link to the relevant story day. Links return to the current saved decision; they do not skip forward or overwrite the story.
@@ -78,6 +90,7 @@ lib/guide.js              Optional bounded Gemini rephrasing with authored fallb
 lib/config.js             Server-only .env parsing and refresh
 public/content.js         English lesson/story/goal/reflection catalogue and sources
 public/game.js            Shared deterministic state transitions, restoration, cents arithmetic
+public/play.js            Harbor map, hands-on activities, stamp meter, and skill passport
 public/app.js             Play/Learn/Community UI, routing, browser progress, draft memory
 public/review.html/js      Protected reviewer workflow UI (API access requires the key)
 public/styles.css         Responsive cream/green interface and reduced motion

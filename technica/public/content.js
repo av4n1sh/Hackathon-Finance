@@ -338,7 +338,77 @@
       ),
     },
   ];
-  const data = { locale: "en", sources, lessons, goals, steps };
+  const missions = [
+    {
+      id: "plan",
+      step: 0,
+      title: "Envelope arranger",
+      label: "Build a little breathing room",
+      instruction:
+        "Move the fictional $140 between two envelopes. Cover at least $60 of essentials and leave enough for your chosen purchase.",
+      reward: "Envelope arranger",
+      success:
+        "Both needs fit. Setting more aside leaves less for the purchase; there is more than one workable split.",
+    },
+    {
+      id: "receipt",
+      step: 2,
+      title: "Receipt builder",
+      label: "Reveal the whole price",
+      instruction:
+        "Build the online pass receipt. Add every advertised charge and watch the total change.",
+      reward: "Receipt builder",
+      success:
+        "You uncovered the $15 total: $12 for the pass and $3 for service. The cash-counter option is $12, but needs an extra trip.",
+    },
+    {
+      id: "message",
+      step: 3,
+      title: "Message detective",
+      label: "Inspect before you send",
+      instruction:
+        "Inspect the highlighted parts of this fictional message, then choose an independent way to check it.",
+      reward: "Message detective",
+      success:
+        "You spotted urgency and a gift-card demand, then found a way to verify outside the message. A familiar logo would not prove who sent it.",
+    },
+  ];
+  const places = [
+    {
+      name: "Home base",
+      icon: "home",
+      mood: "A fresh week. A small goal. A few choices ahead.",
+    },
+    {
+      name: "Care stop",
+      icon: "bus",
+      mood: "The route has changed. Find a plan that works for the visit.",
+    },
+    {
+      name: "Ticket shop",
+      icon: "ticket",
+      mood: "Two ways to pay. Look for the full price.",
+    },
+    {
+      name: "Message pier",
+      icon: "message",
+      mood: "An urgent message arrives. You have time to check.",
+    },
+    {
+      name: "Market square",
+      icon: "bag",
+      mood: "Bring your choices together. Buy, repair, or wait.",
+    },
+  ];
+  const data = {
+    locale: "en",
+    sources,
+    lessons,
+    goals,
+    steps,
+    missions,
+    places,
+  };
   if (typeof module !== "undefined" && module.exports) module.exports = data;
   else root.HarborContent = data;
 })(typeof window === "undefined" ? globalThis : window);
