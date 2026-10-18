@@ -1,10 +1,18 @@
 # Harborbound · An everyday money RPG
 
-Harbor Academy now centers on an explorable RPG called **Harborbound**. Create a traveler, walk through Tidehaven, speak to its characters, complete money-decision quests, and collect learning equipment. The three destinations are **Play**, **Learn**, and **Quest Journal**. Community submission and reviewer interfaces have been retired.
+Harbor Academy offers small money-decision games within **Harborbound**. The three main destinations are **Home**, **Play**, and **Learn**. The harbor RPG and its additional quests remain optional, and the Journal is available through the header’s **Progress** menu. Community submission and reviewer interfaces remain retired.
+
+## A simpler front door
+
+Home is a dedicated page at `#home` and the default for empty or unrecognized routes, for both new and returning players. It explains the purpose, offers one Start/Continue action, and shows a brief saved-progress summary when relevant. The logo and footer brand return Home. A saved open challenge does not automatically appear over Home; selecting Play resumes it with its inputs intact.
+
+Play at `#play` shows a small three-lantern progress indicator and one recommended next game. The order is **make change → build a lantern → choose a delivery route**. **Choose another game** reveals the other activities. **Want to explore more?** reveals the map, Journal, and character customization. XP, levels, inventory, and multiple quest trackers are kept off the default Play page.
+
+Closing a challenge returns to the page from which it was launched. On the simple Play page, a completed challenge advances the recommendation and places keyboard focus on the next game button. Festival inputs, solutions, story progress, character position, and collected achievements are preserved. Opening a game directly from the simple page does not move the overworld character. The full world remains available at `#play/world`, with `#play/story` retained as an alias.
 
 ## Lanternwake: a playable opening
 
-The primary opening now invites the player to bring three festival lanterns back to life. **Start the festival** begins immediately with a default traveler; character customization remains optional. The festival is available alongside the existing story without requiring its five conversations first. Its objectives appear above the collapsed story tracker.
+The games invite the player to bring three festival lanterns back to life. **Start playing** begins with a default traveler; character customization remains optional. The festival is available without requiring the five story conversations first. In the optional world view, its objectives appear above the collapsed story tracker.
 
 Three different activities drive progress:
 
@@ -123,6 +131,7 @@ public/rpg-view.js        Overworld, conversations, quest tracker, inventory, Jo
 public/festival.js        Lantern builds, cash drawer, delivery routes, postcards, validation
 public/festival-view.js   Festival challenges, changing world, companions, postcard album
 public/learn-view.js      Beginner lessons and return links
+public/simple-view.js     Dedicated Home page and one-activity-at-a-time Play page
 public/play.js            Shared practice-activity and skill-passport views
 public/app.js             Routing, input, local persistence, movement updates, UI coordination
 public/*.css              Cream/green interface, tile world, festival, responsive controls
@@ -137,7 +146,7 @@ API bodies are capped at 16 KB and requests at 100 per IP per minute. Static pat
 
 ## Validation and handoff
 
-Automated tests cover all affordable main-story branches, integer-cent conservation, reflections, restoration/rewind, activity outcomes, world dimensions, collisions, reachable destinations, side-quest totals, unique rewards, locked equipment, character restore, retired endpoints, legacy receipt removal, request limits, provider failures, character creation, keyboard/touch events, full NPC quest completion, Learn return, Journal replay, and stored-progress compatibility. Festival checks cover all eight workshop combinations, several valid exact-change combinations, both delivery routes, bridge-pass reuse, collision, invalid solution rejection, reachable postcards, fox unlock, all three world-light transitions, unchanged story funds, modal cancellation, reward uniqueness, and restoration after refresh.
+Automated tests cover all affordable main-story branches, integer-cent conservation, reflections, restoration/rewind, activity outcomes, world dimensions, collisions, reachable destinations, side-quest totals, unique rewards, locked equipment, character restore, retired endpoints, legacy receipt removal, request limits, provider failures, character creation, keyboard/touch events, full NPC quest completion, Learn return, Journal replay, and stored-progress compatibility. Festival checks cover all eight workshop combinations, several valid exact-change combinations, both delivery routes, bridge-pass reuse, collision, invalid solution rejection, reachable postcards, fox unlock, all three world-light transitions, unchanged story funds, modal cancellation, reward uniqueness, and restoration after refresh. Routing checks verify default Home for new and returning players, separate Home/Play pages, a single recommendation, advancement after completion, return to the launch page, retained character position, and resumption of a saved challenge without showing it over Home.
 
 No connected browser was available. jsdom cannot verify rendered art, phone overflow, real keyboard timing, screen-reader interaction, or animation quality. These are outstanding manual checks, not claimed completed. No volunteer research or demographic effectiveness is fabricated. See [the usability script](USABILITY.md).
 

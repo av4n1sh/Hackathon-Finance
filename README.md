@@ -1,8 +1,8 @@
 # Harbor Academy · Harborbound
 
-An everyday money RPG. Jump into **Lanternwake**: build a lantern, run a ticket counter, and deliver festival supplies to light up Tidehaven. Find hidden postcards and befriend a fox as you explore. A five-chapter money story and two additional side quests remain available around the harbor.
+Small games for everyday money choices. **Home** gives a simple introduction and a Start/Continue button. **Play** recommends one activity at a time: make change, build a lantern, then choose a delivery route. The harbor RPG, character options, and extra quests remain available under **Want to explore more?**
 
-**Play · Learn · Quest Journal**
+**Home · Play · Learn**
 
 ```powershell
 npm.cmd start
@@ -12,7 +12,7 @@ Open **http://localhost:3000**. Node.js 18+ is required; runtime has no package 
 
 Arrow keys or WASD move your character; **E** starts a nearby conversation. Touch direction buttons, destination buttons, and a travel menu offer alternative controls.
 
-Use **Start the festival** to play immediately, or customize your traveler first. Festival challenges use separate practice funds and have no countdowns.
+Use **Start playing** on Home. No character form is required. Progress and the Journal are available through the header’s **Progress** menu. Festival challenges use separate practice funds and have no countdowns. Returning Home keeps your saved game intact.
 
 For checks: `npm.cmd --prefix technica ci`, then `npm.cmd test`.
 

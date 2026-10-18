@@ -6,7 +6,8 @@
     R = window.HarborRPG,
     V = window.HarborRPGView,
     F = window.HarborFestival,
-    FV = window.HarborFestivalView;
+    FV = window.HarborFestivalView,
+    S = window.HarborSimple;
   const main = document.querySelector("#main"),
     KEY = "harbor-adventure-v1";
   const esc = (value) =>
@@ -26,6 +27,7 @@
     rpg: R.initial(),
     festival: F.initial(),
     activeFestival: null,
+    festivalReturn: "#play",
     started: false,
     learned: [],
     mastered: [],
@@ -36,7 +38,7 @@
     talking: null,
   });
   let saved = fresh(),
-    previousTab = "play",
+    previousTab = "home",
     rewardMessage = null,
     discovery = null;
   function warn(message) {
@@ -78,6 +80,15 @@
         activeFestival: F.spots.some((s) => s.id === raw.activeFestival)
           ? raw.activeFestival
           : null,
+        festivalReturn: [
+          "#play",
+          "#play/world",
+          "#play/story",
+          "#home",
+          "#journal",
+        ].includes(raw.festivalReturn)
+          ? raw.festivalReturn
+          : "#play",
         started: raw.started === true,
         learned: filter(raw.learned, (id) =>
           C.lessons.some((l) => l.id === id),
@@ -138,7 +149,7 @@
   function progressPanel() {
     const p = R.progress(saved);
     document.querySelector("#progress-content").innerHTML =
-      `<h2>${esc(saved.rpg.name)}</h2><p><strong>Level ${p.level} · ${p.xp} learning XP</strong><br>${saved.game.answers.length}/5 chapters · ${p.sides.length}/2 side quests</p><a class="button secondary" href="#journal">Open Quest Journal</a><p class="hint">Saved in this browser. No account, streaks, or wealth ranking.</p><details><summary>Reset local adventure</summary><p>This clears your character, story, and collected learning progress.</p><button class="secondary" data-action="clear">Clear local progress</button></details>`;
+      `<h2>Your progress</h2><p><strong>${F.completed(saved.festival).length} of 3 lanterns lit</strong><br>Saved in this browser.</p><a class="button secondary" href="#journal">View progress and items</a><details><summary>Adventure details</summary><p>Level ${p.level} · ${p.xp} learning XP<br>${saved.game.answers.length}/5 story chapters · ${p.sides.length}/2 side quests</p></details><details><summary>Reset local adventure</summary><p>This clears your character, story, and collected learning progress.</p><button class="secondary" data-action="clear">Clear local progress</button></details>`;
   }
   function save() {
     collect();
@@ -171,43 +182,39 @@
       requested = "journal";
       history.replaceState(null, "", "#journal");
     }
-    const tab = ["play", "learn", "journal"].includes(requested)
+    const tab = ["home", "play", "learn", "journal"].includes(requested)
         ? requested
-        : "play",
-      order = ["play", "learn", "journal"];
+        : "home",
+      order = ["home", "play", "learn", "journal"],
+      isWorld = tab === "play" && ["world", "story"].includes(sub);
+    if (isWorld && !saved.started) {
+      saved.started = true;
+      save();
+    }
     main.classList.remove("route-in", "route-back");
     main.innerHTML =
-      tab === "learn"
-        ? window.HarborLearn(saved, sub)
-        : tab === "journal"
-          ? V.journal(saved)
-          : sub === "setup"
-            ? setup()
-            : saved.started
-              ? V.world(saved, saved.talking)
-              : V.title(saved);
-    if (tab === "play" && sub !== "setup") FV.attach(saved);
+      tab === "home"
+        ? S.home(saved)
+        : tab === "learn"
+          ? window.HarborLearn(saved, sub)
+          : tab === "journal"
+            ? V.journal(saved)
+            : sub === "setup"
+              ? setup()
+              : isWorld && saved.started
+                ? V.world(saved, saved.talking)
+                : S.play(saved);
+    if (isWorld && saved.started) FV.attach(saved);
     if (tab === "journal")
       main
         .querySelector(".character-hud")
         .insertAdjacentHTML("afterend", FV.journal(saved));
-    if (tab === "play" && sub !== "setup" && !saved.started) {
-      const start = main.querySelector(".title-parchment .button");
-      start.outerHTML =
-        '<button class="button" data-action="quick-start">Start the festival →</button><a class="text-button title-customize" href="#play/setup">Customize your traveler</a>';
-      main.querySelector(".title-subtitle").textContent =
-        "Three lanterns. Three challenges. Your festival.";
-      main.querySelector(
-        ".title-parchment>p:not(.title-subtitle)",
-      ).textContent =
-        "Build a lantern, run a ticket stall, and explore a new delivery route. Bring Tidehaven to life one good decision at a time.";
-    }
-    if (rewardMessage && !discovery)
+    if (tab === "play" && rewardMessage && !discovery)
       main.insertAdjacentHTML(
         "beforeend",
         `<div class="reward-toast" role="status"><span class="reward-star" aria-hidden="true">✦</span><span>${esc(rewardMessage)}</span><button class="text-button" data-action="dismiss-reward" aria-label="Dismiss reward notification">Got it</button></div>`,
       );
-    if (discovery)
+    if (isWorld && discovery)
       main.insertAdjacentHTML(
         "beforeend",
         `<aside class="discovery-pop" role="status"><span>✉ Postcard found · +5 XP once</span><h3>${esc(discovery.title)}</h3><p>${esc(discovery.note)}</p>${saved.festival.postcards.length === 3 ? "<strong>A little fox wants to travel with you. Choose it in your companion settings.</strong>" : ""}<button class="text-button" data-action="close-discovery">Keep exploring →</button></aside>`,
@@ -250,7 +257,7 @@
       main.focus({ preventScroll: true });
       window.scrollTo({ top: 0, behavior: "instant" });
     }
-    document.title = `${tab === "play" ? "Harborbound" : tab === "journal" ? "Quest Journal" : "Learn"} · Harbor Academy`;
+    document.title = `${tab === "home" ? "Home" : tab === "play" ? "Play" : tab === "journal" ? "Quest Journal" : "Learn"} · Harbor Academy`;
   }
   function focusWorld() {
     document.querySelector("#harbor-world")?.focus();
@@ -281,22 +288,37 @@
   function openFestival(id) {
     const spot = F.spots.find((s) => s.id === id);
     if (!spot) return;
+    saved.festivalReturn = [
+      "#play/world",
+      "#play/story",
+      "#journal",
+      "#home",
+    ].includes(location.hash)
+      ? location.hash
+      : "#play";
     saved.started = true;
-    saved.rpg = F.travel(saved.rpg, spot);
+    if (["#play/world", "#play/story"].includes(location.hash))
+      saved.rpg = F.travel(saved.rpg, spot);
     saved.activeFestival = id;
     saved.talking = null;
     discovery = null;
     save();
     if (!location.hash.startsWith("#play"))
-      history.pushState(null, "", "#play/world");
+      history.pushState(null, "", "#play");
     render(false, false);
   }
   function closeFestival() {
     saved.activeFestival = null;
     rewardMessage = null;
     save();
+    if (location.hash !== saved.festivalReturn)
+      history.replaceState(null, "", saved.festivalReturn);
     render(false, false);
-    focusWorld();
+    if (["#play/world", "#play/story"].includes(location.hash)) focusWorld();
+    else {
+      const target = document.querySelector(".next-game-card button") || main;
+      target.focus({ preventScroll: true });
+    }
   }
   function festivalAction(action, value, selector) {
     rewardMessage = null;
@@ -489,7 +511,7 @@
         saved.started = true;
         saved.talking = null;
         save();
-        location.hash = "#play/world";
+        location.hash = "#play";
         return;
       }
       if (button.dataset.move && !button.dataset.mission) {
@@ -614,7 +636,7 @@
         saved = fresh();
         lastProgress = R.progress(saved);
         save();
-        location.hash = "#play";
+        location.hash = "#home";
         render();
         return;
       }

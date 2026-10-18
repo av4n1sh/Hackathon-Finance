@@ -15,7 +15,7 @@ function fixture({ seed, blocked = false, fetcher } = {}) {
   const dom = new JSDOM(
       fs.readFileSync(path.join(directory, "index.html"), "utf8"),
       {
-        url: "http://localhost:3000/#play",
+        url: "http://localhost:3000/",
         runScripts: "outside-only",
         pretendToBeVisual: true,
         virtualConsole: vc,
@@ -47,6 +47,7 @@ function fixture({ seed, blocked = false, fetcher } = {}) {
     "rpg-view.js",
     "festival-view.js",
     "learn-view.js",
+    "simple-view.js",
     "app.js",
   ])
     w.eval(fs.readFileSync(path.join(directory, file), "utf8"));
@@ -80,7 +81,7 @@ test("RPG entry creates a traveler and replaces Community with the Quest Journal
   assert.match(f.w.document.querySelector("main").textContent, /Harborbound/);
   assert.deepEqual(
     [...f.w.document.querySelectorAll("nav a")].map((a) => a.textContent),
-    ["Play", "Learn", "Quest Journal"],
+    ["Home", "Play", "Learn"],
   );
   await f.go("#play/setup");
   f.w.document.querySelector("[name=name]").value = "<b>Ari</b>";
@@ -155,6 +156,7 @@ test("all five NPC quests complete, unlock equipment, and persist the ending", a
     seed: f.w.localStorage.getItem("harbor-adventure-v1"),
   });
   t.after(() => second.dom.window.close());
+  await second.go("#play/world");
   assert.equal(second.w.document.querySelectorAll(".rpg-map").length, 1);
   assert.equal(second.data().game.answers.length, 5);
   assert.deepEqual(f.errors, []);
@@ -252,6 +254,8 @@ test("legacy saves migrate, old community links go to Journal, and bad character
   };
   const f = fixture({ seed: JSON.stringify(old) });
   t.after(() => f.dom.window.close());
+  assert.ok(f.w.document.querySelector(".home-screen"));
+  await f.go("#play/world");
   assert.ok(f.w.document.querySelector("#harbor-world"));
   await f.go("#community");
   assert.equal(f.w.location.hash, "#journal");
@@ -261,6 +265,7 @@ test("legacy saves migrate, old community links go to Journal, and bad character
     seed: JSON.stringify({ ...old, rpg: { version: 1, x: 0, y: 0 } }),
   });
   t.after(() => bad.dom.window.close());
+  await bad.go("#play/world");
   assert.equal(bad.w.document.querySelector("#storage-message").hidden, false);
   assert.match(
     bad.w.document.querySelector(".quest-tracker").textContent,
@@ -302,7 +307,8 @@ test("quick-start festival completes all three challenges, lights the world, and
   t.after(() => f.dom.window.close());
   f.click("[data-action=quick-start]");
   await tick();
-  assert.ok(f.w.document.querySelector(".festival-tracker"));
+  assert.ok(f.w.document.querySelector(".simple-play"));
+  await f.go("#play/world");
   assert.equal(f.data().started, true);
   const walletBefore = f.w.HarborGame.snapshot(f.data().game).available;
   f.click("[data-open-festival=workshop]");
@@ -339,15 +345,13 @@ test("quick-start festival completes all three challenges, lights the world, and
     "ArrowRight",
     "ArrowDown",
   ])
-    f.w.document
-      .querySelector(".delivery-board")
-      .dispatchEvent(
-        new f.w.KeyboardEvent("keydown", {
-          key,
-          bubbles: true,
-          cancelable: true,
-        }),
-      );
+    f.w.document.querySelector(".delivery-board").dispatchEvent(
+      new f.w.KeyboardEvent("keydown", {
+        key,
+        bubbles: true,
+        cancelable: true,
+      }),
+    );
   assert.deepEqual({ x: f.data().rpg.x, y: f.data().rpg.y }, position);
   assert.ok(f.data().festival.solutions.route);
   f.click("[data-action=close-festival]");
@@ -368,6 +372,7 @@ test("quick-start festival completes all three challenges, lights the world, and
     seed: f.w.localStorage.getItem("harbor-adventure-v1"),
   });
   t.after(() => second.dom.window.close());
+  await second.go("#play/world");
   assert.ok(second.w.document.querySelector(".festival-phase-3"));
   second.click("[data-open-festival=cash]");
   second.click("[data-festival-action=submit-cash]");
@@ -406,4 +411,99 @@ test("postcard exploration unlocks the fox and companion positions follow walkin
     /A pocket-sized adventure/,
   );
   assert.deepEqual(f.errors, []);
+});
+
+test("Home is the default for new and returning players and remains separate from Play", async (t) => {
+  const f = fixture();
+  t.after(() => f.dom.window.close());
+  assert.ok(f.w.document.querySelector(".home-screen"));
+  assert.equal(f.w.document.querySelector(".rpg-map"), null);
+  assert.equal(f.w.document.querySelector("#festival-dialog"), null);
+  assert.equal(
+    f.w.document.querySelector("nav [aria-current=page]").textContent,
+    "Home",
+  );
+  f.click("[data-action=quick-start]");
+  await tick();
+  assert.ok(f.w.document.querySelector(".simple-play"));
+  assert.equal(f.w.location.hash, "#play");
+  assert.equal(f.w.document.querySelector(".rpg-map"), null);
+  const seed = f.w.localStorage.getItem("harbor-adventure-v1"),
+    second = fixture({ seed });
+  t.after(() => second.dom.window.close());
+  assert.ok(second.w.document.querySelector(".home-resume"));
+  assert.equal(second.w.document.querySelector(".rpg-map"), null);
+  await f.go("#learn");
+  await f.go("#home");
+  assert.ok(f.w.document.querySelector(".home-screen"));
+  assert.equal(f.w.localStorage.getItem("harbor-adventure-v1"), seed);
+  assert.deepEqual(f.errors, []);
+  assert.deepEqual(second.errors, []);
+});
+
+test("simple Play recommends one activity, advances after completion, and returns to the hub", async (t) => {
+  const f = fixture();
+  t.after(() => f.dom.window.close());
+  await f.go("#play");
+  assert.match(
+    f.w.document.querySelector(".next-game-card h2").textContent,
+    /Make the right change/,
+  );
+  assert.equal(f.w.document.querySelector(".choose-game").open, false);
+  assert.equal(f.w.document.querySelector(".explore-more").open, false);
+  f.click(".next-game-card button");
+  const before = { x: f.data().rpg.x, y: f.data().rpg.y };
+  for (const coin of [500, 200, 100])
+    f.click(`[data-festival-action=coin][data-value="${coin}"]`);
+  f.click("[data-festival-action=submit-cash]");
+  f.click("[data-action=close-festival]");
+  assert.equal(f.w.location.hash, "#play");
+  assert.equal(f.w.document.querySelector(".rpg-map"), null);
+  assert.match(
+    f.w.document.querySelector(".next-game-card h2").textContent,
+    /Build a lantern/,
+  );
+  assert.match(
+    f.w.document.querySelector(".simple-lights").textContent,
+    /1 of 3/,
+  );
+  assert.equal(
+    f.w.document.activeElement,
+    f.w.document.querySelector(".next-game-card button"),
+  );
+  assert.deepEqual({ x: f.data().rpg.x, y: f.data().rpg.y }, before);
+  await f.go("#journal");
+  f.click("[data-open-festival=workshop]");
+  f.click("[data-action=close-festival]");
+  assert.equal(f.w.location.hash, "#journal");
+  assert.ok(f.w.document.querySelector(".inventory"));
+  assert.deepEqual(f.errors, []);
+});
+
+test("a saved open game stays out of Home and resumes from Play with its inputs intact", async (t) => {
+  const f = fixture();
+  t.after(() => f.dom.window.close());
+  await f.go("#play");
+  f.click(".next-game-card button");
+  f.click('[data-festival-action=coin][data-value="500"]');
+  const second = fixture({
+    seed: f.w.localStorage.getItem("harbor-adventure-v1"),
+  });
+  t.after(() => second.dom.window.close());
+  assert.ok(second.w.document.querySelector(".home-screen"));
+  assert.equal(second.w.document.querySelector("#festival-dialog"), null);
+  assert.match(
+    second.w.document.querySelector(".home-resume").textContent,
+    /Make the right change/,
+  );
+  await second.go("#play");
+  assert.ok(second.w.document.querySelector("#festival-dialog[open]"));
+  assert.match(
+    second.w.document.querySelector(".change-tray").textContent,
+    /\$5/,
+  );
+  second.click("[data-action=close-festival]");
+  assert.ok(second.w.document.querySelector(".simple-play"));
+  assert.deepEqual(second.data().festival.coins, [500]);
+  assert.deepEqual(second.errors, []);
 });

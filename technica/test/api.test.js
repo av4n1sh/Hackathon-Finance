@@ -53,6 +53,7 @@ test("retired submission and reviewer surfaces are absent; RPG scripts and style
     "/festival.js",
     "/festival-view.js",
     "/festival.css",
+    "/simple-view.js",
     "/remove.html",
   ])
     assert.equal((await fetch(base + route)).status, 200);

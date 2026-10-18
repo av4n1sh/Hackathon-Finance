@@ -4,6 +4,8 @@ Status: prepared script; no volunteer sessions or outcomes are claimed.
 
 Allow 15–20 minutes. Explain: “We’re testing the game, not you. The money and story are fictional. You may pause or skip any task. Please avoid sharing private financial details.” Ask permission before recording notes. Offer keyboard, touch, screen-reader, assisted, or asynchronous participation according to the volunteer’s preference. No demographic information is required.
 
+Begin with the simplified flow: describe the purpose from Home, use Start playing, identify the recommended game, finish it, and describe what Play recommends next. Return Home and check that progress remains. Find another activity only when asked, then locate optional harbor exploration and the Progress menu. With a saved in-progress challenge, open Home first and then resume from Play; check that the separate landing screen and retained inputs are understandable. Observe whether the reduced choices improve clarity rather than assuming they do. The longer RPG tasks below apply only if testing the optional exploration experience.
+
 1. Describe what the title screen suggests this game is about. Create a traveler without entering a real name or creating an account.
 2. Walk around the harbor. Find a character using the map and then the named travel menu. Try E and the talk button. Observe whether collision or controls cause confusion.
 3. Find the current main quest. Describe what the $80 wallet and protected $60 mean. Visit a later character and describe why the main story cannot skip ahead.
