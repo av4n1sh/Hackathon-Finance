@@ -11,8 +11,9 @@
       x: 5,
       y: 1,
       icon: "✥",
-      title: "Build a lantern that fits the plan",
-      description: "Choose parts and a delivery plan within $20.",
+      title: "Lantern lab",
+      description:
+        "Three little choices. One glowing creation. Keep it within $20.",
       light: "The cottage lantern is glowing again.",
     },
     {
@@ -21,8 +22,9 @@
       x: 8,
       y: 6,
       icon: "▤",
-      title: "Run the festival ticket counter",
-      description: "Build the right change from a cash drawer.",
+      title: "Pocket-money pop-up",
+      description:
+        "Meet three visitors and put the right change in their tray.",
       light: "Warm lights spill across the market stalls.",
     },
     {
@@ -31,8 +33,8 @@
       x: 8,
       y: 9,
       icon: "⚑",
-      title: "Get the lanterns to the stage",
-      description: "Choose a free detour or a shorter toll-bridge route.",
+      title: "Special delivery",
+      description: "Pick a path and compare a little time with a little money.",
       light: "The pier lanterns reflect across the harbor.",
     },
   ];
@@ -122,6 +124,70 @@
   const routeRows = ["..$..", ".##..", "..#..", "....."],
     routeStart = { x: 0, y: 1 },
     routeGoal = { x: 4, y: 1 };
+  const cashOrders = [
+    {
+      id: "tickets",
+      visitor: "Pip",
+      item: "Festival ticket",
+      icon: "▤",
+      quantity: 3,
+      price: 400,
+      received: 2000,
+      request: "Three tickets, please! My friends are waiting by the stage.",
+    },
+    {
+      id: "lemonade",
+      visitor: "Mina",
+      item: "Lemonade",
+      icon: "◒",
+      quantity: 2,
+      price: 300,
+      received: 1000,
+      request:
+        "Two lemonades for the lantern makers. Building is thirsty work!",
+    },
+    {
+      id: "postcards",
+      visitor: "Tavi",
+      item: "Postcard",
+      icon: "✉",
+      quantity: 3,
+      price: 200,
+      received: 2000,
+      request:
+        "Three postcards, please. Even a harbor gull likes getting mail.",
+    },
+  ];
+  const deliveryPaths = {
+    bridge: {
+      name: "Across the bridge",
+      moves: ["up", "right", "right", "right", "right", "down"],
+    },
+    coast: {
+      name: "Along the coast",
+      moves: ["down", "down", "right", "right", "right", "right", "up", "up"],
+    },
+  };
+  const deliveryJobs = [
+    {
+      title: "A relaxed afternoon",
+      request:
+        "No rush today. Can you keep the $2 delivery fund for tomorrow’s supplies?",
+      preferred: "coast",
+    },
+    {
+      title: "The opening bell",
+      request:
+        "The stage needs its lanterns as soon as possible. You can use the $2 fund to take the shorter path.",
+      preferred: "bridge",
+    },
+    {
+      title: "Your kind of delivery",
+      request:
+        "No urgent deadline. Would you rather keep $2 or walk two fewer steps? Both choices work.",
+      preferred: null,
+    },
+  ];
   const initial = () => ({
     version: 1,
     parts: { lens: null, mount: null, delivery: null },
@@ -130,6 +196,12 @@
     solutions: {},
     postcards: [],
     companion: "gull",
+    buildStep: 0,
+    workshopBuilt: false,
+    cashRound: 0,
+    cashReceipts: {},
+    deliveryJob: 0,
+    routeReason: null,
   });
   const money = (n) => "$" + (n / 100).toFixed(2);
   function repairStatus(plan) {
@@ -156,14 +228,18 @@
         ) && total <= 2000,
     };
   }
-  function cashStatus(coins) {
+  function cashStatus(coins, round = 0) {
     const total = coins.reduce((sum, c) => sum + c, 0);
+    const order = cashOrders[round];
+    if (!order) throw Error("Choose an available visitor.");
+    const sale = order.quantity * order.price,
+      due = order.received - sale;
     return {
       total,
-      sale: 3 * 400,
-      received: 2000,
-      due: 2000 - 3 * 400,
-      valid: total === 800,
+      sale,
+      received: order.received,
+      due,
+      valid: total === due,
     };
   }
   function routeStatus(moves) {
@@ -210,8 +286,26 @@
       const [category, id] = String(value).split(":");
       if (!parts[category]?.some((p) => p.id === id))
         throw Error("Choose an available lantern part.");
-      return { ...state, parts: { ...state.parts, [category]: id } };
+      return {
+        ...state,
+        parts: { ...state.parts, [category]: id },
+        buildStep: Math.min(Object.keys(parts).indexOf(category) + 1, 2),
+        workshopBuilt: false,
+      };
     }
+    if (action === "build-step") {
+      const step = Number(value);
+      if (!Number.isInteger(step) || step < 0 || step > 2)
+        throw Error("Choose a build step.");
+      return { ...state, buildStep: step };
+    }
+    if (action === "reset-workshop")
+      return {
+        ...state,
+        parts: initial().parts,
+        buildStep: 0,
+        workshopBuilt: false,
+      };
     if (action === "coin") {
       if (![100, 200, 500].includes(value) || state.coins.length >= 20)
         throw Error("Choose a drawer note, or clear a few first.");
@@ -220,7 +314,37 @@
     if (action === "undo-cash")
       return { ...state, coins: state.coins.slice(0, -1) };
     if (action === "clear-cash") return { ...state, coins: [] };
-    if (action === "reset-route") return { ...state, moves: [] };
+    if (action === "reset-route")
+      return { ...state, moves: [], routeReason: null };
+    if (action === "choose-route") {
+      const path = deliveryPaths[value];
+      if (!path) throw Error("Choose the bridge or the coast path.");
+      return {
+        ...state,
+        moves: [...path.moves],
+        routeReason: null,
+        solutions: {
+          ...state.solutions,
+          route: state.solutions.route || [...path.moves],
+        },
+      };
+    }
+    if (action === "next-delivery") {
+      if (!routeStatus(state.moves).complete)
+        throw Error("Deliver this crate before taking another job.");
+      return {
+        ...state,
+        deliveryJob: (state.deliveryJob + 1) % deliveryJobs.length,
+        moves: [],
+        routeReason: null,
+      };
+    }
+    if (action === "route-reason") {
+      const answer = Number(value);
+      if (!routeStatus(state.moves).complete || ![0, 1].includes(answer))
+        throw Error("Deliver the crate first, then try the question.");
+      return { ...state, routeReason: answer };
+    }
     if (action === "route") {
       if (state.moves.length >= 80)
         throw Error("Try resetting this delivery route.");
@@ -231,6 +355,7 @@
       return {
         ...state,
         moves,
+        routeReason: null,
         solutions:
           status.complete && !state.solutions.route
             ? { ...state.solutions, route: moves }
@@ -247,6 +372,7 @@
         );
       return {
         ...state,
+        workshopBuilt: true,
         solutions: {
           ...state.solutions,
           workshop: state.solutions.workshop || { ...state.parts },
@@ -254,19 +380,37 @@
       };
     }
     if (action === "submit-cash") {
-      const cash = cashStatus(state.coins);
+      const cash = cashStatus(state.coins, state.cashRound);
       if (!cash.valid)
         throw Error(
-          `The drawer currently holds ${money(cash.total)}. Compare the $20 received with the $12 ticket sale, then adjust the change.`,
+          cash.total < cash.due
+            ? `Almost! Add ${money(cash.due - cash.total)} more to the tray. ${money(cash.received)} paid − ${money(cash.sale)} spent = ${money(cash.due)} change.`
+            : `A little too much! Take back ${money(cash.total - cash.due)}. ${money(cash.received)} paid − ${money(cash.sale)} spent = ${money(cash.due)} change.`,
         );
       return {
         ...state,
+        cashReceipts: {
+          ...state.cashReceipts,
+          [cashOrders[state.cashRound].id]: [...state.coins],
+        },
         solutions: {
           ...state.solutions,
-          cash: state.solutions.cash || [...state.coins],
+          ...(state.cashRound === 0
+            ? { cash: state.solutions.cash || [...state.coins] }
+            : {}),
         },
       };
     }
+    if (action === "next-customer") {
+      if (
+        !state.cashReceipts[cashOrders[state.cashRound].id] ||
+        state.cashRound >= cashOrders.length - 1
+      )
+        throw Error("Serve this visitor before moving on.");
+      return { ...state, cashRound: state.cashRound + 1, coins: [] };
+    }
+    if (action === "restart-cash")
+      return { ...state, cashRound: 0, coins: [], cashReceipts: {} };
     if (action === "companion") {
       if (
         !["gull", "fox", "none"].includes(value) ||
@@ -368,6 +512,75 @@
         state.solutions.route = [...proof];
       } else throw Error("Unknown festival solution.");
     }
+    state.buildStep =
+      raw.buildStep === undefined
+        ? Math.min(
+            Object.keys(parts).filter((c) => state.parts[c] !== null).length,
+            2,
+          )
+        : raw.buildStep;
+    if (
+      !Number.isInteger(state.buildStep) ||
+      state.buildStep < 0 ||
+      state.buildStep > 2
+    )
+      throw Error("Build step is invalid.");
+    state.workshopBuilt =
+      raw.workshopBuilt === undefined
+        ? Boolean(
+            state.solutions.workshop &&
+              Object.keys(parts).every(
+                (c) => state.parts[c] === state.solutions.workshop[c],
+              ),
+          )
+        : raw.workshopBuilt;
+    if (
+      typeof state.workshopBuilt !== "boolean" ||
+      (state.workshopBuilt &&
+        (!state.solutions.workshop || !repairStatus(state.parts).valid))
+    )
+      throw Error("Workshop result is invalid.");
+    state.cashRound = raw.cashRound === undefined ? 0 : raw.cashRound;
+    if (!Number.isInteger(state.cashRound) || !cashOrders[state.cashRound])
+      throw Error("Visitor is invalid.");
+    const receipts =
+      raw.cashReceipts === undefined
+        ? state.solutions.cash
+          ? { tickets: state.solutions.cash }
+          : {}
+        : raw.cashReceipts;
+    if (!receipts || typeof receipts !== "object" || Array.isArray(receipts))
+      throw Error("Visitor receipts are invalid.");
+    for (const [id, notes] of Object.entries(receipts)) {
+      const round = cashOrders.findIndex((o) => o.id === id);
+      if (
+        round < 0 ||
+        !Array.isArray(notes) ||
+        notes.length > 20 ||
+        notes.some((n) => ![100, 200, 500].includes(n)) ||
+        !cashStatus(notes, round).valid
+      )
+        throw Error("Visitor change is invalid.");
+      state.cashReceipts[id] = [...notes];
+    }
+    if (
+      cashOrders
+        .slice(0, state.cashRound)
+        .some((o) => !state.cashReceipts[o.id])
+    )
+      throw Error("Serve earlier visitors first.");
+    state.deliveryJob = raw.deliveryJob === undefined ? 0 : raw.deliveryJob;
+    if (
+      !Number.isInteger(state.deliveryJob) ||
+      !deliveryJobs[state.deliveryJob]
+    )
+      throw Error("Delivery job is invalid.");
+    state.routeReason = raw.routeReason === undefined ? null : raw.routeReason;
+    if (
+      (state.routeReason !== null && ![0, 1].includes(state.routeReason)) ||
+      (state.routeReason !== null && !routeStatus(state.moves).complete)
+    )
+      throw Error("Delivery answer is invalid.");
     if (
       !["gull", "fox", "none"].includes(raw.companion) ||
       (raw.companion === "fox" && state.postcards.length < 3)
@@ -381,6 +594,9 @@
     spots,
     postcards,
     parts,
+    cashOrders,
+    deliveryPaths,
+    deliveryJobs,
     routeRows,
     routeStart,
     routeGoal,

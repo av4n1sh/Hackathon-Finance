@@ -6,21 +6,22 @@
   );
   const games = {
     workshop: {
-      name: "Build a lantern",
+      name: "Lantern lab",
       skill: "Compare full prices",
       description:
-        "Pick parts and a delivery option that fit a $20 practice budget.",
+        "Build a glowing lantern, one choice at a time. Can your creation fit a $20 fund?",
     },
     cash: {
-      name: "Make the right change",
+      name: "Pocket-money pop-up",
       skill: "Practice with cash",
       description:
-        "Sell three festival tickets and build the visitor’s change.",
+        "A little stall. Three friendly visitors. Tap notes to make their change, then see them on their way.",
     },
     route: {
-      name: "Choose a delivery route",
+      name: "Special delivery",
       skill: "Balance time and cost",
-      description: "Take a shorter paid bridge or find the longer free path.",
+      description:
+        "A crate of lanterns needs you. Pick the bridge or the coast and see what your choice changes.",
     },
   };
   function lantern(lit) {
@@ -37,7 +38,7 @@
       next = sequence.find((s) => !done.includes(s.id)),
       focus = next || sequence[0],
       game = games[focus.id];
-    return `<section class="simple-play"><div class="simple-play-intro"><span class="eyebrow">Harborbound · Play</span><h1>One small game at a time.</h1><p>Try a choice, see what happens, and learn as you go.</p></div><div class="simple-lights" aria-label="${done.length} of 3 festival activities complete"><div aria-hidden="true">${F.spots.map((s) => `<span class="${done.includes(s.id) ? "lit" : ""}">${lantern(done.includes(s.id))}</span>`).join("")}</div><p><strong>${done.length} of 3 lanterns lit</strong>${done.length === 3 ? " · You brought the festival to life." : ""}</p></div><section class="next-game-card"><div><span class="tag">${next ? "Your next activity" : "Try another approach"}</span><h2>${game.name}</h2><p>${game.description}</p><span class="next-game-skill">You’ll practice: ${game.skill.toLowerCase()}.</span><button data-open-festival="${focus.id}">${saved.activeFestival === focus.id ? "Resume this game" : next ? "Play this game" : "Play again"} <span aria-hidden="true">→</span></button></div><div class="next-game-art" aria-hidden="true">${lantern(done.includes(focus.id))}</div></section><details class="choose-game"><summary>Choose another game</summary><div>${F.spots.map((s) => `<button class="game-row" data-open-festival="${s.id}"><span><strong>${games[s.id].name}</strong><small>${games[s.id].skill}</small></span><span>${done.includes(s.id) ? "Completed · Replay" : "Play"} →</span></button>`).join("")}</div></details><details class="explore-more"><summary>Want to explore more?</summary><p>The harbor adventure and extra options are here when you want them.</p><div class="extra-links"><a href="#play/world">Explore the harbor <span aria-hidden="true">↗</span></a><a href="#journal">See progress and collected items <span aria-hidden="true">↗</span></a><a href="#play/setup">Customize your traveler <span aria-hidden="true">↗</span></a></div></details></section>`;
+    return `<section class="simple-play"><div class="simple-play-intro"><span class="eyebrow">Harborbound · Play</span><h1>One small game at a time.</h1><p>Try a choice, see what happens, and learn as you go.</p></div><div class="simple-lights" aria-label="${done.length} of 3 festival activities complete"><div aria-hidden="true">${F.spots.map((s) => `<span class="${done.includes(s.id) ? "lit" : ""}">${lantern(done.includes(s.id))}</span>`).join("")}</div><p><strong>${done.length} of 3 lanterns lit</strong>${done.length === 3 ? " · You brought the festival to life." : ""}</p></div><section class="next-game-card"><div><span class="tag">${next ? "Your next activity" : "Try another approach"}</span><h2>${game.name}</h2><p>${game.description}</p><span class="next-game-skill">You’ll practice: ${game.skill.toLowerCase()}.</span><button data-open-festival="${focus.id}">${saved.activeFestival === focus.id ? "Resume this game" : next ? "Play this game" : "Play again"} <span aria-hidden="true">→</span></button></div><div class="next-game-art" aria-hidden="true">${root.HarborMiniGames.cover(focus.id)}</div></section><details class="choose-game"><summary>Choose another game</summary><div>${F.spots.map((s) => `<button class="game-row" data-open-festival="${s.id}"><span><strong>${games[s.id].name}</strong><small>${games[s.id].skill}</small></span><span>${done.includes(s.id) ? "Completed · Replay" : "Play"} →</span></button>`).join("")}</div></details><details class="explore-more"><summary>Want to explore more?</summary><p>The harbor adventure and extra options are here when you want them.</p><div class="extra-links"><a href="#play/world">Explore the harbor <span aria-hidden="true">↗</span></a><a href="#journal">See progress and collected items <span aria-hidden="true">↗</span></a><a href="#play/setup">Customize your traveler <span aria-hidden="true">↗</span></a></div></details></section>`;
   }
   root.HarborSimple = { home, play };
 })(window);

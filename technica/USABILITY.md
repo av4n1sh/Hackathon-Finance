@@ -23,8 +23,8 @@ For the Lanternwake opening, start with these tasks before the longer story:
 
 - Start the festival without completing a character form. Describe the three objectives and how to find them.
 - Build a lantern. Try an over-budget plan, then a workable one. Explain the repair charge and whether the fund feels separate from the main wallet. Describe what changed in the town after completion.
-- Run the ticket counter and make change with two different note combinations. Observe whether the cash drawer feels understandable and interactive. Ask if retry feedback helps without giving the sense of a penalty.
-- Deliver the lantern crate using a free route and a paid route. Describe their trade-off. Try the keyboard and direction buttons; confirm that the overworld character stays put while controlling the crate.
+- Serve Pip, then optionally serve Mina and Tavi at the pop-up. Try incorrect change and describe the correction. Refresh during Mina’s order and check that the queue and selected notes remain. Observe whether the visitors, visible amounts, and result cards help understanding without feeling repetitive.
+- Compare the two route cards for a relaxed delivery and the opening-bell delivery. Explain what changes in time and cost. Try the short reflection and reconsider an answer. Open the optional manual grid, reset, and steer with keyboard and direction buttons; confirm that it stays open while moving and that the overworld character stays put.
 - Find three postcards and choose the fox companion. Try dismissing a discovery notice and playing without a companion. Look for overlay obstruction and small map targets on a phone.
 - Restore all three lights, refresh, and find their record in the Journal. Repeat a challenge and check that XP does not duplicate. Ask which activities were engaging, which were repetitive, and what decisions felt meaningful; do not assume the new mechanics improve enjoyment or learning without volunteer evidence.
 

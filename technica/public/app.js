@@ -288,14 +288,15 @@
   function openFestival(id) {
     const spot = F.spots.find((s) => s.id === id);
     if (!spot) return;
-    saved.festivalReturn = [
-      "#play/world",
-      "#play/story",
-      "#journal",
-      "#home",
-    ].includes(location.hash)
-      ? location.hash
-      : "#play";
+    if (!saved.activeFestival)
+      saved.festivalReturn = [
+        "#play/world",
+        "#play/story",
+        "#journal",
+        "#home",
+      ].includes(location.hash)
+        ? location.hash
+        : "#play";
     saved.started = true;
     if (["#play/world", "#play/story"].includes(location.hash))
       saved.rpg = F.travel(saved.rpg, spot);
@@ -322,12 +323,31 @@
   }
   function festivalAction(action, value, selector) {
     rewardMessage = null;
+    const manualOpen = main.querySelector(".manual-delivery")?.open;
     try {
       saved.festival = F.act(saved.festival, action, value);
       save();
       render(false, false);
-      if (selector)
-        main.querySelector(selector)?.focus({ preventScroll: true });
+      if (manualOpen && main.querySelector(".manual-delivery"))
+        main.querySelector(".manual-delivery").open = true;
+      const target = ["part", "build-step"].includes(action)
+        ? main.querySelector("#build-stage-heading")
+        : main.querySelector(".game-win h3") ||
+          (selector && main.querySelector(selector)) ||
+          main.querySelector(".game-brief strong");
+      if (target) {
+        if (!target.matches("button,a,input,select,textarea,[tabindex]"))
+          target.setAttribute("tabindex", "-1");
+        target.focus({ preventScroll: true });
+      }
+      if (
+        action === "coin" ||
+        action === "undo-cash" ||
+        action === "clear-cash"
+      )
+        announce(
+          `${F.cashStatus(saved.festival.coins, saved.festival.cashRound).total / 100} dollars in the change tray.`,
+        );
     } catch (error) {
       const feedback = document.querySelector("#challenge-feedback");
       if (feedback) {

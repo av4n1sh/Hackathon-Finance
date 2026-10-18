@@ -142,3 +142,104 @@ test("festival restore replays evidence, preserves prior wins, and rejects corru
   assert.ok(p.inventory.some((i) => i.id === "festival-pin"));
   assert.equal(p.equipped.id, "notebook");
 });
+
+test("the visitor queue uses each order's real change, persists mid-round, and awards cash XP once", () => {
+  let f = F.initial();
+  assert.throws(() => F.act(f, "next-customer"), /Serve this visitor/);
+  for (const [round, notes] of [
+    [0, [500, 200, 100]],
+    [1, [200, 200]],
+    [2, [500, 500, 200, 200]],
+  ]) {
+    const order = F.cashOrders[round],
+      status = F.cashStatus([], round);
+    assert.equal(status.due, order.received - order.quantity * order.price);
+    if (round === 0)
+      assert.throws(() => F.act(f, "submit-cash"), /Add \$8.00 more/);
+    for (const note of notes) f = F.act(f, "coin", note);
+    const checkpoint = F.restore(JSON.parse(JSON.stringify(f)));
+    assert.equal(checkpoint.cashRound, round);
+    assert.deepEqual(checkpoint.coins, notes);
+    f = F.act(checkpoint, "submit-cash");
+    assert.deepEqual(f.cashReceipts[order.id], notes);
+    assert.equal(R.progress(profile(f)).xp, 30);
+    if (round < 2) f = F.act(f, "next-customer");
+  }
+  assert.equal(Object.keys(f.cashReceipts).length, 3);
+  assert.throws(() => F.act(f, "next-customer"));
+  f = F.act(f, "restart-cash");
+  assert.equal(f.cashRound, 0);
+  assert.deepEqual(f.coins, []);
+  assert.deepEqual(f.cashReceipts, {});
+  assert.equal(R.progress(profile(f)).xp, 30);
+  f = F.act(f, "coin", 500);
+  f = F.act(f, "coin", 500);
+  assert.throws(() => F.act(f, "submit-cash"), /Take back \$2.00/);
+});
+
+test("guided builds and one-tap deliveries can be replayed without repeating rewards", () => {
+  let f = F.initial();
+  for (const [i, part] of [
+    "lens:reclaimed",
+    "mount:salvaged",
+    "delivery:delivered",
+  ].entries()) {
+    f = F.act(f, "part", part);
+    assert.equal(f.buildStep, Math.min(i + 1, 2));
+  }
+  f = F.act(f, "submit-workshop");
+  assert.equal(f.workshopBuilt, true);
+  const proof = f.solutions.workshop;
+  f = F.act(f, "reset-workshop");
+  assert.equal(f.workshopBuilt, false);
+  assert.deepEqual(f.solutions.workshop, proof);
+  assert.equal(R.progress(profile(f)).xp, 30);
+  for (const path of ["coast", "bridge"]) {
+    f = F.act(f, "choose-route", path);
+    const status = F.routeStatus(f.moves);
+    assert.equal(status.complete, true);
+    assert.equal(status.cost, path === "coast" ? 0 : 200);
+    f = F.act(f, "route-reason", 1);
+    assert.equal(f.routeReason, 1);
+    f = F.act(f, "route-reason", 0);
+    assert.deepEqual(F.restore(JSON.parse(JSON.stringify(f))), f);
+    assert.equal(R.progress(profile(f)).xp, 60);
+    f = F.act(f, "next-delivery");
+    assert.equal(f.routeReason, null);
+    assert.deepEqual(f.moves, []);
+  }
+  assert.equal(f.deliveryJob, 2);
+  assert.throws(() => F.act(f, "route-reason", 0), /Deliver the crate first/);
+  assert.throws(() => F.act(f, "choose-route", "teleport"));
+});
+
+test("old festival saves migrate their proofs and corrupt round or receipt data is rejected", () => {
+  let f = F.initial();
+  for (const note of [500, 200, 100]) f = F.act(f, "coin", note);
+  f = F.act(f, "submit-cash");
+  const old = JSON.parse(JSON.stringify(f));
+  for (const key of [
+    "buildStep",
+    "workshopBuilt",
+    "cashRound",
+    "cashReceipts",
+    "deliveryJob",
+    "routeReason",
+  ])
+    delete old[key];
+  const restored = F.restore(old);
+  assert.deepEqual(restored.cashReceipts.tickets, [500, 200, 100]);
+  assert.deepEqual(restored.solutions, f.solutions);
+  assert.equal(R.progress(profile(restored)).xp, 30);
+  for (const patch of [
+    { cashRound: 3 },
+    { cashRound: 2 },
+    { cashReceipts: { tickets: [500] } },
+    { cashReceipts: { fake: [500, 200, 100] } },
+    { buildStep: -1 },
+    { workshopBuilt: true },
+    { deliveryJob: 99 },
+    { routeReason: 0 },
+  ])
+    assert.throws(() => F.restore({ ...f, ...patch }));
+});

@@ -52,6 +52,7 @@ test("retired submission and reviewer surfaces are absent; RPG scripts and style
     "/rpg.css",
     "/festival.js",
     "/festival-view.js",
+    "/mini-games-view.js",
     "/festival.css",
     "/simple-view.js",
     "/remove.html",

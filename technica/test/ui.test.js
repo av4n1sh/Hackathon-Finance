@@ -45,6 +45,7 @@ function fixture({ seed, blocked = false, fetcher } = {}) {
     "rpg.js",
     "festival.js",
     "rpg-view.js",
+    "mini-games-view.js",
     "festival-view.js",
     "learn-view.js",
     "simple-view.js",
@@ -105,8 +106,11 @@ test("Learn topics expand and collapse, open practice, and retain completed prog
   assert.equal(card.open, false);
   assert.equal(f.w.localStorage.getItem("harbor-adventure-v1"), before);
   f.click(".lesson-card > summary");
+  const navigated = new Promise((resolve) =>
+    f.w.addEventListener("hashchange", resolve, { once: true }),
+  );
   f.click('.lesson-card a[href="#learn/plan"]');
-  await tick();
+  await navigated;
   assert.equal(f.w.location.hash, "#learn/plan");
   const detail = doc.querySelector(".learn-disclosure");
   assert.equal(detail.open, false);
@@ -383,6 +387,7 @@ test("quick-start festival completes all three challenges, lights the world, and
     /above the \$20/,
   );
   assert.equal(f.data().festival.solutions.workshop, undefined);
+  f.click('[data-festival-action=build-step][data-value="0"]');
   for (const part of ["lens:reclaimed", "mount:salvaged"])
     f.click(`[data-festival-action=part][data-value="${part}"]`);
   f.click("[data-festival-action=submit-workshop]");
@@ -398,6 +403,7 @@ test("quick-start festival completes all three challenges, lights the world, and
   f.click("[data-festival-action=submit-cash]");
   f.click("[data-action=close-festival]");
   f.click("[data-open-festival=route]");
+  f.click(".manual-delivery > summary");
   const position = { x: f.data().rpg.x, y: f.data().rpg.y };
   for (const key of [
     "ArrowUp",
@@ -414,6 +420,7 @@ test("quick-start festival completes all three challenges, lights the world, and
         cancelable: true,
       }),
     );
+  assert.equal(f.w.document.querySelector(".manual-delivery").open, true);
   assert.deepEqual({ x: f.data().rpg.x, y: f.data().rpg.y }, position);
   assert.ok(f.data().festival.solutions.route);
   f.click("[data-action=close-festival]");
@@ -437,7 +444,9 @@ test("quick-start festival completes all three challenges, lights the world, and
   await second.go("#play/world");
   assert.ok(second.w.document.querySelector(".festival-phase-3"));
   second.click("[data-open-festival=cash]");
-  second.click("[data-festival-action=submit-cash]");
+  second.click("[data-festival-action=clear-cash]");
+  for (const coin of [500, 200, 100])
+    second.click(`[data-festival-action=coin][data-value="${coin}"]`);
   assert.equal(second.w.HarborRPG.progress(second.data()).xp, 90);
   second.w.document
     .querySelector("#festival-dialog")
@@ -445,6 +454,128 @@ test("quick-start festival completes all three challenges, lights the world, and
   assert.equal(second.data().activeFestival, null);
   assert.deepEqual(f.errors, []);
   assert.deepEqual(second.errors, []);
+});
+
+test("pop-up customers give useful retry feedback and retain a partly served queue after refresh", async (t) => {
+  const f = fixture();
+  t.after(() => f.dom.window.close());
+  await f.go("#play");
+  f.click("[data-open-festival=cash]");
+  f.click('[data-festival-action=coin][data-value="500"]');
+  f.click("[data-festival-action=submit-cash]");
+  assert.match(
+    f.w.document.querySelector("#challenge-feedback").textContent,
+    /Add \$3.00 more/,
+  );
+  assert.equal(f.data().festival.solutions.cash, undefined);
+  for (const note of [200, 100])
+    f.click(`[data-festival-action=coin][data-value="${note}"]`);
+  f.click("[data-festival-action=submit-cash]");
+  assert.match(
+    f.w.document.querySelector(".game-win").textContent,
+    /Pip’s order is ready/,
+  );
+  assert.equal(
+    f.w.document.activeElement,
+    f.w.document.querySelector(".game-win h3"),
+  );
+  f.click("[data-festival-action=next-customer]");
+  assert.match(
+    f.w.document.querySelector(".game-brief").textContent,
+    /Mina · Visitor 2 of 3/,
+  );
+  assert.match(
+    f.w.document.querySelector(".counter-math").textContent,
+    /\$6.00/,
+  );
+  f.click('[data-festival-action=coin][data-value="200"]');
+  const reloaded = fixture({
+    seed: f.w.localStorage.getItem("harbor-adventure-v1"),
+  });
+  t.after(() => reloaded.dom.window.close());
+  await reloaded.go("#play");
+  assert.match(
+    reloaded.w.document.querySelector(".game-brief").textContent,
+    /Mina/,
+  );
+  assert.match(
+    reloaded.w.document.querySelector(".change-tray").textContent,
+    /\$2/,
+  );
+  reloaded.click('[data-festival-action=coin][data-value="200"]');
+  reloaded.click("[data-festival-action=submit-cash]");
+  reloaded.click("[data-festival-action=next-customer]");
+  for (const note of [500, 500, 200, 200])
+    reloaded.click(`[data-festival-action=coin][data-value="${note}"]`);
+  reloaded.click("[data-festival-action=submit-cash]");
+  assert.match(
+    reloaded.w.document.querySelector(".game-win").textContent,
+    /Tavi’s order is ready/,
+  );
+  assert.match(
+    reloaded.w.document.querySelector(".cash-equation").textContent,
+    /\$14.00/,
+  );
+  assert.equal(reloaded.w.HarborRPG.progress(reloaded.data()).xp, 30);
+  assert.deepEqual(f.errors, []);
+  assert.deepEqual(reloaded.errors, []);
+});
+
+test("guided lantern choices and quick delivery briefs teach trade-offs while retaining the launch page", async (t) => {
+  const f = fixture();
+  t.after(() => f.dom.window.close());
+  await f.go("#journal");
+  f.click("[data-open-festival=workshop]");
+  assert.equal(
+    f.w.document.querySelectorAll("[data-festival-action=part]").length,
+    2,
+  );
+  for (const part of ["lens:reclaimed", "mount:salvaged", "delivery:delivered"])
+    f.click(`[data-festival-action=part][data-value="${part}"]`);
+  assert.match(
+    f.w.document.querySelector(".build-preview").textContent,
+    /Lens repair\$3.00/,
+  );
+  assert.match(
+    f.w.document.querySelector(".build-preview .hint").textContent,
+    /\$1.00 left/,
+  );
+  f.click("[data-festival-action=submit-workshop]");
+  assert.match(
+    f.w.document.querySelector(".game-win").textContent,
+    /include repairs and delivery/,
+  );
+  f.click(".game-win [data-open-festival=route]");
+  assert.equal(f.data().festivalReturn, "#journal");
+  f.click('[data-festival-action=choose-route][data-value="coast"]');
+  assert.match(
+    f.w.document.querySelector(".route-result").textContent,
+    /8 steps · \$0.00 spent · \$2.00 left/,
+  );
+  f.click('[data-festival-action=route-reason][data-value="1"]');
+  assert.match(
+    f.w.document.querySelector(".route-reflection .game-tip").textContent,
+    /Try comparing again/,
+  );
+  f.click('[data-festival-action=route-reason][data-value="0"]');
+  assert.match(
+    f.w.document.querySelector(".route-reflection .game-tip").textContent,
+    /Exactly/,
+  );
+  f.click("[data-festival-action=next-delivery]");
+  assert.match(
+    f.w.document.querySelector(".game-brief").textContent,
+    /opening bell/,
+  );
+  f.click('[data-festival-action=choose-route][data-value="bridge"]');
+  assert.match(
+    f.w.document.querySelector(".route-result").textContent,
+    /6 steps · \$2.00 spent · \$0.00 left/,
+  );
+  assert.equal(f.w.HarborRPG.progress(f.data()).xp, 60);
+  f.click("[data-action=close-festival]");
+  assert.equal(f.w.location.hash, "#journal");
+  assert.deepEqual(f.errors, []);
 });
 
 test("postcard exploration unlocks the fox and companion positions follow walking", async (t) => {
@@ -509,7 +640,7 @@ test("simple Play recommends one activity, advances after completion, and return
   await f.go("#play");
   assert.match(
     f.w.document.querySelector(".next-game-card h2").textContent,
-    /Make the right change/,
+    /Pocket-money pop-up/,
   );
   assert.equal(f.w.document.querySelector(".choose-game").open, false);
   assert.equal(f.w.document.querySelector(".explore-more").open, false);
@@ -523,7 +654,7 @@ test("simple Play recommends one activity, advances after completion, and return
   assert.equal(f.w.document.querySelector(".rpg-map"), null);
   assert.match(
     f.w.document.querySelector(".next-game-card h2").textContent,
-    /Build a lantern/,
+    /Lantern lab/,
   );
   assert.match(
     f.w.document.querySelector(".simple-lights").textContent,
@@ -556,7 +687,7 @@ test("a saved open game stays out of Home and resumes from Play with its inputs 
   assert.equal(second.w.document.querySelector("#festival-dialog"), null);
   assert.match(
     second.w.document.querySelector(".home-resume").textContent,
-    /Make the right change/,
+    /Pocket-money pop-up/,
   );
   await second.go("#play");
   assert.ok(second.w.document.querySelector("#festival-dialog[open]"));
